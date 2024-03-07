@@ -18,6 +18,14 @@ export const generateWords=(numberOfWords: number)=> {
       isGuessed: false,
       isCorrect: false,
       isPrevWrong: false,
+      chars: word.split('').map((char) => {
+        return {
+          char,
+          isCorrect: false,
+          isGuessed: false,
+        }
+      }),
+      extra:"",
     }
   })
 
