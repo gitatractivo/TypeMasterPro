@@ -21,6 +21,7 @@ const config = {
     "@typescript-eslint/consistent-type-definitions": "off",
     "@typescript-eslint/no-unsafe-return": "off",
     "@typescript-eslint/no-unsafe-assignment": "off",
+    // "@typescript-eslint/no-unused-assignment": "off",
     "@typescript-eslint/consistent-type-imports": [
       "warn",
       {

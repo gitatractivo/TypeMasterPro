@@ -1,8 +1,8 @@
 import { generateWords } from "@/lib/utils";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import useKeyDown from "./useKeyDown";
 
-type Word = {
+export type Word = {
   word: string;
   isGuessed: boolean;
   isCorrect: boolean;
@@ -10,7 +10,7 @@ type Word = {
   chars: Char[];
   extra: string;
 };
-type Char = {
+export type Char = {
   char: string;
   isCorrect: boolean;
   isGuessed: boolean;
@@ -25,6 +25,7 @@ const useWord = () => {
   const [keyState, setKeyState] = useState<"spac" | "inc" | "dec">("spac");
   const charIndex = (wordTyped ?? "").length - 1;
   const keyStrokes = useRef<number>(0);
+  const [worddd, setWorddd] = useState<Word[]>(words.current);
   useKeyDown((key, code) => {
     handleKeyPress(key, code);
   });
@@ -37,8 +38,19 @@ const useWord = () => {
       const word = original.word;
       const chars = [...original.chars];
       let extra = "";
-      if (wordTyped?.length > word.length) {
-        extra = wordTypeRef.current.slice(word.length);
+      if (wordTyped?.length > word.length ) {
+        // if (original.extra.length >= 20) {
+        //   wordTypeRef.current=wordTypeRef.current.slice(0,-1);
+        //   return;
+        // }
+          extra = wordTypeRef.current.slice(word.length);
+        const arr = [...words.current];
+        arr[currentIndex.current] = {
+          ...original,
+          extra,
+        };
+        words.current = arr;
+        setWorddd(words.current);
         return;
       }
 
@@ -49,6 +61,7 @@ const useWord = () => {
           ...ch,
           isGuessed: false,
           isCorrect: false,
+          
         };
       } else {
         const ch = chars[charIndex];
@@ -65,13 +78,14 @@ const useWord = () => {
       }
 
       const arr = [...words.current];
-
       arr[currentIndex.current] = {
         ...original,
         extra,
         chars,
       };
       words.current = arr;
+      setWorddd(words.current);
+      console.log(words.current);
     } catch (error) {
       console.log(error);
     }
@@ -92,6 +106,7 @@ const useWord = () => {
 
   const handleLetterPressed = (key: string) => {
     if (!key) return;
+    console.log(key);
 
     wordTypeRef.current = wordTypeRef.current + key;
     setWordTyped(wordTypeRef.current);
@@ -110,11 +125,12 @@ const useWord = () => {
     };
     if (currentIndex.current < newWords.length - 1 && !isCorrect) {
       newWords[currentIndex.current + 1] = {
-        ...newWords[currentIndex.current],
+        ...newWords[currentIndex.current + 1],
         isPrevWrong: true,
       };
     }
     words.current = newWords;
+    setWorddd(words.current);
 
     currentIndex.current += 1;
     // setWords(newWords);
@@ -122,6 +138,8 @@ const useWord = () => {
     wordTypeRef.current = "";
     setWordTyped(wordTypeRef.current);
   };
+
+  // console.log(words.current)
 
   const handleBackSpacePressed = () => {
     if (!wordTypeRef.current) {
@@ -134,7 +152,13 @@ const useWord = () => {
           ...newWords[currentIndex.current],
           isPrevWrong: false,
         };
+        newWords[currentIndex.current - 1] = {
+          ...newWords[currentIndex.current - 1],
+          isGuessed: false,
+        };
         words.current = newWords;
+        setWorddd(words.current);
+
         currentIndex.current -= 1;
       } else return;
     }
@@ -143,20 +167,10 @@ const useWord = () => {
     setWordTyped(wordTypeRef.current);
   };
 
-  console.log(keyStrokes.current);
-
-  const current = words.current[currentIndex.current].word;
-
-  // const wordTyped = wordTypeRef.current;
-
-  const currentWordIndex = currentIndex.current;
   return {
-    words,
-    wordTyped,
-    currentWordIndex,
-    current,
+    words: worddd,
+    currentWordIndex: currentIndex.current,
     charIndex,
-    handleKeyPress,
   };
 };
 
