@@ -38,9 +38,9 @@ const WordWrapper = ({
   return (
     <div
       className={cn(
-        "flex break-words",
-        charIndex === -1 && isCurrent && "border-l-2 border-black",
-        word.isGuessed && !word.isCorrect && "border-b-2 border-red-700"
+        "flex break-words border-l-2 tracking-tighter border-transparent",
+        charIndex === -1 && isCurrent && " border-l-black cursor",
+        word.isGuessed && !word.isCorrect && "border-b-2 border-b-red-700"
       )}
     >
       {word.chars.map((ch, ind) => (
@@ -49,7 +49,8 @@ const WordWrapper = ({
       {word.extra && (
         <span
           className={cn(
-            "text-red-700" ,isCurrent && "border-r-2 border-black"
+            "text-red-700 border-r-2 border-transparent tracking-[1px] break-words",
+            isCurrent && "border-r-black cursor"
           )}
         >
           {word.extra}
@@ -67,8 +68,8 @@ const CharWrapper = ({
 }) => (
   <span
     className={cn(
-      "text-green-700",
-      isCurrent && "border-r-2 border-black",
+      "text-green-700 border-r-2 border-transparent ",
+      isCurrent && " border-r-black cursor",
       char.isGuessed && char.isCorrect && "text-cyan-900",
       char.isGuessed && !char.isCorrect && "text-red-700"
     )}
