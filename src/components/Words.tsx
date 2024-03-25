@@ -1,7 +1,6 @@
 import { Word } from "@/hooks/useWord";
-import React from "react";
-import { Char } from "../hooks/useWord";
 import { cn } from "@/lib/utils";
+import { Char } from "../hooks/useWord";
 
 type WordProps = {
   words: Word[];
@@ -10,9 +9,9 @@ type WordProps = {
 };
 
 const Words = ({ words, currentWordIndex, charIndex }: WordProps) => {
-  console.log(words);
   return (
     <div className="bg-cyan-300 p-3 w-4/5 h-fit  mx-auto break-words flex flex-wrap gap-1 text-lg font-semibold">
+
       {words.map((w, ind) => (
         <WordWrapper
           word={w}

@@ -26,9 +26,8 @@ const useWord = () => {
   const charIndex = (wordTyped ?? "").length - 1;
   const keyStrokes = useRef<number>(0);
   const [worddd, setWorddd] = useState<Word[]>(words.current);
-  useKeyDown((key, code) => {
-    handleKeyPress(key, code);
-  });
+  
+ 
 
   useEffect(() => {
     if (keyState !== "dec" && charIndex === -1) return;
@@ -85,7 +84,6 @@ const useWord = () => {
       };
       words.current = arr;
       setWorddd(words.current);
-      console.log(words.current);
     } catch (error) {
       console.log(error);
     }
@@ -106,8 +104,6 @@ const useWord = () => {
 
   const handleLetterPressed = (key: string) => {
     if (!key) return;
-    console.log(key);
-
     wordTypeRef.current = wordTypeRef.current + key;
     setWordTyped(wordTypeRef.current);
     setKeyState("inc");
@@ -167,10 +163,20 @@ const useWord = () => {
     setWordTyped(wordTypeRef.current);
   };
 
+  const resetWords = () => {
+    words.current = generateWords(30);
+    setWorddd(words.current);
+    currentIndex.current = 0;
+    wordTypeRef.current = "";
+    setWordTyped(wordTypeRef.current);
+  }
+
   return {
     words: worddd,
     currentWordIndex: currentIndex.current,
     charIndex,
+    handleKeyPress,
+    resetWords
   };
 };
 

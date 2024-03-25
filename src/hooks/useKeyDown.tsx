@@ -1,19 +1,20 @@
-import React, { useEffect } from 'react'
+import React, { useEffect } from "react";
 
-const useKeyDown = (callback: (key:string,code:string) => void) => {
+const useKeyDown = (callback: (key: string, code: string) => void) => {
   useEffect(() => {
-    window.addEventListener('keydown', downHandler);
+    const downHandler = (e: KeyboardEvent) => {
+      const { key, code } = e;
+      callback(key, code);
+    };
+
+    window.addEventListener("keydown", downHandler);
 
     return () => {
-      window.removeEventListener('keydown', downHandler);
+      window.removeEventListener("keydown", downHandler);
     };
-  }, []);
+  }, [callback]); // Add callback as a dependency
 
-  const downHandler = (e: KeyboardEvent) => {
-    const { key, code } = e;
-    callback(key,code)
-  }
-  return {}
-}
+  return {};
+};
 
-export default useKeyDown
+export default useKeyDown;
