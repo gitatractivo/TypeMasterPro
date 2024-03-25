@@ -17,50 +17,41 @@ export type Char = {
 };
 
 const useWord = () => {
-  const words = useRef<Word[]>(generateWords(30));
-  // const [currentWordIndex, setCurrentWordIndex] = useState<number>(0);
+  const [words, setWords] = useState<Word[]>(generateWords(3));
+  const [currentWordIndex, setCurrentWordIndex] = useState<number>(0);
   const [wordTyped, setWordTyped] = useState<string>("");
-  const wordTypeRef = useRef<string>("");
-  const currentIndex = useRef<number>(0);
   const [keyState, setKeyState] = useState<"spac" | "inc" | "dec">("spac");
   const charIndex = (wordTyped ?? "").length - 1;
   const keyStrokes = useRef<number>(0);
-  const [worddd, setWorddd] = useState<Word[]>(words.current);
-  
- 
+
 
   useEffect(() => {
     if (keyState !== "dec" && charIndex === -1) return;
 
     try {
-      const original = words.current[currentIndex.current];
+      const original = words[currentWordIndex];
       const word = original.word;
       const chars = [...original.chars];
       let extra = "";
-      if (wordTyped?.length > word.length ) {
-        // if (original.extra.length >= 20) {
-        //   wordTypeRef.current=wordTypeRef.current.slice(0,-1);
-        //   return;
-        // }
-          extra = wordTypeRef.current.slice(word.length);
-        const arr = [...words.current];
-        arr[currentIndex.current] = {
+      if (wordTyped?.length > word.length) {
+        extra = wordTyped.slice(word.length);
+        const arr = [...words];
+        arr[currentWordIndex] = {
           ...original,
           extra,
         };
-        words.current = arr;
-        setWorddd(words.current);
+        setWords(arr);
         return;
       }
 
-      if (keyState === "dec") {
+      if (keyState === "dec" && wordTyped.length !== original.word.length) {
+        
         const ch = chars[charIndex + 1];
 
         chars[charIndex + 1] = {
           ...ch,
           isGuessed: false,
           isCorrect: false,
-          
         };
       } else {
         const ch = chars[charIndex];
@@ -76,18 +67,18 @@ const useWord = () => {
         };
       }
 
-      const arr = [...words.current];
-      arr[currentIndex.current] = {
+      const arr = [...words];
+      arr[currentWordIndex] = {
         ...original,
         extra,
         chars,
       };
-      words.current = arr;
-      setWorddd(words.current);
+      setWords(arr);
     } catch (error) {
       console.log(error);
     }
   }, [wordTyped]);
+  console.log("words", words)
 
   const handleKeyPress = (key: string, code: string) => {
     if (code === "Space" || code === "Backspace" || /^[a-zA-Z]$/.test(key)) {
@@ -104,76 +95,71 @@ const useWord = () => {
 
   const handleLetterPressed = (key: string) => {
     if (!key) return;
-    wordTypeRef.current = wordTypeRef.current + key;
-    setWordTyped(wordTypeRef.current);
+    setWordTyped(wordTyped + key);
     setKeyState("inc");
   };
 
   const handleSpacePressed = () => {
-    if (!wordTypeRef.current) return;
-    const word = words.current[currentIndex.current].word;
-    const isCorrect = word === wordTypeRef.current;
-    const newWords = [...words.current];
-    newWords[currentIndex.current] = {
-      ...newWords[currentIndex.current],
+    if (!wordTyped) return;
+    const word = words[currentWordIndex].word;
+    const isCorrect = word === wordTyped;
+    const newWords = [...words];
+    newWords[currentWordIndex] = {
+      ...newWords[currentWordIndex],
       isCorrect,
       isGuessed: true,
     };
-    if (currentIndex.current < newWords.length - 1 && !isCorrect) {
-      newWords[currentIndex.current + 1] = {
-        ...newWords[currentIndex.current + 1],
+    if (currentWordIndex < newWords.length - 1 && !isCorrect) {
+      newWords[currentWordIndex + 1] = {
+        ...newWords[currentWordIndex + 1],
         isPrevWrong: true,
       };
     }
-    words.current = newWords;
-    setWorddd(words.current);
+    setWords(newWords);
 
-    currentIndex.current += 1;
-    // setWords(newWords);
+    setCurrentWordIndex(currentWordIndex + 1);
     setKeyState("spac");
-    wordTypeRef.current = "";
-    setWordTyped(wordTypeRef.current);
+    setWordTyped("");
   };
 
-  // console.log(words.current)
-
   const handleBackSpacePressed = () => {
-    if (!wordTypeRef.current) {
+    if (!wordTyped) {
       if (
-        currentIndex.current > 0 &&
-        words.current[currentIndex.current].isPrevWrong
+        currentWordIndex > 0 &&
+        words[currentWordIndex].isPrevWrong
       ) {
-        const newWords = [...words.current];
-        newWords[currentIndex.current] = {
-          ...newWords[currentIndex.current],
+        const newWords = [...words];
+        newWords[currentWordIndex] = {
+          ...newWords[currentWordIndex],
           isPrevWrong: false,
         };
-        newWords[currentIndex.current - 1] = {
-          ...newWords[currentIndex.current - 1],
+        newWords[currentWordIndex - 1] = {
+          ...newWords[currentWordIndex - 1],
           isGuessed: false,
         };
-        words.current = newWords;
-        setWorddd(words.current);
+        setWords(newWords);
+        console.log(newWords[currentWordIndex - 1]);
+        const word = newWords[currentWordIndex - 1].chars.filter(c => c.isGuessed).map(c => c.char).join('') + newWords[currentWordIndex - 1].extra
 
-        currentIndex.current -= 1;
-      } else return;
+        setCurrentWordIndex(currentWordIndex - 1);
+        setWordTyped(word);
+        setKeyState("dec");
+      }
+      return;
     }
-    wordTypeRef.current = wordTypeRef.current.slice(0, -1);
+    setWordTyped(wordTyped.slice(0, -1));
     setKeyState("dec");
-    setWordTyped(wordTypeRef.current);
   };
 
   const resetWords = () => {
-    words.current = generateWords(30);
-    setWorddd(words.current);
-    currentIndex.current = 0;
-    wordTypeRef.current = "";
-    setWordTyped(wordTypeRef.current);
+    setWords(generateWords(30));
+    setCurrentWordIndex(0);
+    setWordTyped("");
   }
 
   return {
-    words: worddd,
-    currentWordIndex: currentIndex.current,
+    words,
+    currentWordIndex,
     charIndex,
     handleKeyPress,
     resetWords

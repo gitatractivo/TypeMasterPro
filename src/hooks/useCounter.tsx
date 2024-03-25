@@ -13,7 +13,7 @@ const useCounter = (initialTime: number, onCallTimerEnd:()=>void) => {
 
   const handleKeyDownCallback = useCallback(
     (key: string, code: string) => {
-      countDown && handleKeyPress(key, code);
+      true && handleKeyPress(key, code);
     },
     [countDown, handleKeyPress]
   );
