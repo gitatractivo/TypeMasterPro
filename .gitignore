@@ -9,7 +9,7 @@ lerna-debug.log*
 bun.lockb
 
 package-lock.json
-
+.VSCodeCounter
 
 node_modules
 dist

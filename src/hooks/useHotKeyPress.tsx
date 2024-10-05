@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import  { useEffect, useRef } from 'react';
 
 const useHotKeyPress = (bindings: string[], callback: () => void) => {
   const pressedKeys = useRef<string[]>([]);

@@ -1,8 +1,6 @@
 import { useState } from "react";
-import Words from "./components/WordsComponent";
-import useCounter from "./hooks/useCounter";
-import { WordProvider } from "./components/WordContext";
 import TypingScreenComponent from "./components/TypingScreenComponent";
+import { WordProvider } from "./components/WordContext";
 
 function App() {
   const [initialTime, setInitiialTme] = useState<number>(15);
@@ -11,7 +9,7 @@ function App() {
   };
 
   return (
-    <WordProvider initialTime={initialTime} onCallTimerEnd={onCallTimerEnd}>
+    <WordProvider initialTime={initialTime} onTimerEnd={onCallTimerEnd}>
       <TypingScreenComponent />
     </WordProvider>
   );
