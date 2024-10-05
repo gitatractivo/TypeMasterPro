@@ -1,6 +1,9 @@
 import { Word } from "@/types";
-import { createContext, useContext } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import useCounter, { useCounterProps } from "../hooks/useCounter";
+
+const DEFAULT_TIMER = 60; // 60 seconds
+const TIMER_KEY = "typing_game_timer";
 
 interface WordContextType {
   words: Word[];
@@ -10,13 +13,20 @@ interface WordContextType {
   startOrResetTimer: () => void;
   stopTimer: () => void;
   isActive: boolean;
+  initialTime: number;
+  updateInitialTime: (newTime: number) => void;
 }
 
 const WordContext = createContext<WordContextType | undefined>(undefined);
 
-export const WordProvider: React.FC<
-  { children: React.ReactNode } & useCounterProps
-> = ({ children, onTimerEnd, initialTime }) => {
+export const WordProvider: React.FC<{
+  children: React.ReactNode;
+  onTimerEnd: () => void;
+}> = ({ children, onTimerEnd }) => {
+  const [initialTime, setInitialTimer] = useState<number>(() => {
+    const savedTimer = localStorage.getItem(TIMER_KEY);
+    return savedTimer ? parseInt(savedTimer, 10) : DEFAULT_TIMER;
+  });
   const {
     words,
     currentWordIndex,
@@ -26,6 +36,17 @@ export const WordProvider: React.FC<
     isActive,
     stopTimer,
   } = useCounter({ initialTime, onTimerEnd });
+  useEffect(() => {
+    localStorage.setItem(TIMER_KEY, initialTime.toString());
+  }, [initialTime]);
+
+  const updateInitialTime = (newTime: number) => {
+    if (newTime > 0) {
+      setInitialTimer(newTime);
+    } else {
+      console.error("Initial timer must be greater than 0");
+    }
+  };
 
   return (
     <WordContext.Provider
@@ -37,6 +58,8 @@ export const WordProvider: React.FC<
         startOrResetTimer,
         isActive,
         stopTimer,
+        initialTime,
+        updateInitialTime,
       }}
     >
       {children}
@@ -51,3 +74,4 @@ export const useWordContext = () => {
   }
   return context;
 };
+

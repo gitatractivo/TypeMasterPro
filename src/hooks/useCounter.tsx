@@ -1,16 +1,17 @@
 import { useCallback, useEffect } from "react";
 import useKeyDown from "./useKeyDown";
-import { useTimer, UseTimerProps } from "./useTimer";
+import { useTimer } from "./useTimer";
 import useWord from "./useWord";
 
-export type useCounterProps = {} & UseTimerProps;
+export type useCounterProps = { initialTime: number; onTimerEnd: () => void };
 
 const useCounter = ({ initialTime, onTimerEnd }: useCounterProps) => {
-  const { words, currentWordIndex, charIndex, handleKeyPress,  } =
+  const { words, currentWordIndex, charIndex, handleKeyPress, resetWords } =
     useWord();
   const { timer, isActive, startOrResetTimer, stopTimer } = useTimer({
     initialTime,
     onTimerEnd,
+    resetWords,
   });
 
   const handleKeyDown = useCallback(
