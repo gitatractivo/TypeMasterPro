@@ -1,23 +1,12 @@
 import { generateWords } from "@/lib/utils";
 import { useEffect, useRef, useState } from "react";
 import useKeyDown from "./useKeyDown";
+import type { Word } from "@/types";
 
-export type Word = {
-  word: string;
-  isGuessed: boolean;
-  isCorrect: boolean;
-  isPrevWrong: boolean;
-  chars: Char[];
-  extra: string;
-};
-export type Char = {
-  char: string;
-  isCorrect: boolean;
-  isGuessed: boolean;
-};
+const INITIAL_WORDS_NUMBER= 30;
 
 const useWord = () => {
-  const [words, setWords] = useState<Word[]>(generateWords(3));
+  const [words, setWords] = useState<Word[]>(generateWords(INITIAL_WORDS_NUMBER));
   const [currentWordIndex, setCurrentWordIndex] = useState<number>(0);
   const [wordTyped, setWordTyped] = useState<string>("");
   const [keyState, setKeyState] = useState<"spac" | "inc" | "dec">("spac");
@@ -78,7 +67,7 @@ const useWord = () => {
       console.log(error);
     }
   }, [wordTyped]);
-  console.log("words", words)
+  // console.log("words", words)
 
   const handleKeyPress = (key: string, code: string) => {
     if (code === "Space" || code === "Backspace" || /^[a-zA-Z]$/.test(key)) {
@@ -138,7 +127,7 @@ const useWord = () => {
           isGuessed: false,
         };
         setWords(newWords);
-        console.log(newWords[currentWordIndex - 1]);
+        // console.log(newWords[currentWordIndex - 1]);
         const word = newWords[currentWordIndex - 1].chars.filter(c => c.isGuessed).map(c => c.char).join('') + newWords[currentWordIndex - 1].extra
 
         setCurrentWordIndex(currentWordIndex - 1);
@@ -152,7 +141,7 @@ const useWord = () => {
   };
 
   const resetWords = () => {
-    setWords(generateWords(30));
+    setWords(generateWords(INITIAL_WORDS_NUMBER));
     setCurrentWordIndex(0);
     setWordTyped("");
   }

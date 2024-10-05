@@ -1,28 +1,19 @@
 import { useState } from "react";
-import Words from "./components/Words";
+import Words from "./components/WordsComponent";
 import useCounter from "./hooks/useCounter";
+import { WordProvider } from "./components/WordContext";
+import TypingScreenComponent from "./components/TypingScreenComponent";
 
 function App() {
-  const onCallTimerEnd = ()=>{
+  const [initialTime, setInitiialTme] = useState<number>(15);
+  const onCallTimerEnd = () => {
     // alert("timer end")
-  }
-  const { words, currentWordIndex, charIndex, timer, startInterVal } =
-    useCounter(15, onCallTimerEnd);
-  return (
-    <div className="w-screen h-screen flex flex-col justify-center items-center bg-cyan-500  gap-4">
-      {timer}
-      
-      <Words
-        words={words}
-        currentWordIndex={currentWordIndex}
-        charIndex={charIndex}
-      />
-      <button onClick={startInterVal}>
-      start
-      </button>
-      
+  };
 
-    </div>
+  return (
+    <WordProvider initialTime={initialTime} onCallTimerEnd={onCallTimerEnd}>
+      <TypingScreenComponent />
+    </WordProvider>
   );
 }
 
