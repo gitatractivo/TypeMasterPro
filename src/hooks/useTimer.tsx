@@ -4,24 +4,27 @@ export type UseTimerProps = {
   initialTime: number;
   onTimerEnd: () => void;
   onTimerReset: () => void;
-  resetWords: () => void;
+  resetFunction: () => void;
 };
 
 export const useTimer = ({
   initialTime,
   onTimerEnd,
-  resetWords,
+  resetFunction,
   onTimerReset,
 }: UseTimerProps) => {
   const [countDown, setCountDown] = useState<number>(initialTime * 1000);
   const [isActive, setIsActive] = useState<boolean>(false);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const startTime = useRef<number | null>(null);
 
   const startOrResetTimer = useCallback(() => {
     console.log("starting timer");
     if (initialTime <= 0) {
       throw new Error("Initial time must be greater than zero");
     }
+    
+    
 
     setIsActive(true);
     setCountDown(initialTime * 1000);
@@ -29,12 +32,12 @@ export const useTimer = ({
     if (intervalRef.current) {
       clearInterval(intervalRef.current);
       onTimerReset();
-    
 
-      resetWords();
+      resetFunction();
     }
 
     intervalRef.current = setInterval(() => {
+      
       setCountDown((prevCount) => {
         if (prevCount <= 1000) {
           clearInterval(intervalRef.current!);
@@ -45,6 +48,7 @@ export const useTimer = ({
         return prevCount - 1000;
       });
     }, 1000);
+    startTime.current = Date.now();
   }, [initialTime, onTimerEnd]);
 
   const stopTimer = useCallback(() => {
@@ -79,10 +83,17 @@ export const useTimer = ({
     [initialTime]
   );
 
+  const getElapsedTime = useCallback(() => {
+    if (!startTime.current) return 0;
+    return Date.now() - startTime.current;
+  }, [startTime.current]);
+
   return {
     timer: formatTime(countDown),
     isActive,
     startOrResetTimer,
     stopTimer,
+    getElapsedTime,
+
   };
 };

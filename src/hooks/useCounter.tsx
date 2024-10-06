@@ -1,11 +1,17 @@
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import useKeyDown from "./useKeyDown";
 import { useTimer } from "./useTimer";
 import useWord from "./useWord";
+import { Word } from "@/types";
+import { Metrics } from "@/components/WordContext";
+export type WordTiming = {
+  word: Word;
+  timestamp: number;
+};
 
 export type useCounterProps = {
   initialTime: number;
-  onTimerEnd: () => void;
+  onTimerEnd: (metrics: Metrics) => void;
   onTimerReset: () => void;
 };
 
@@ -14,30 +20,75 @@ const useCounter = ({
   onTimerEnd,
   onTimerReset,
 }: useCounterProps) => {
-  const { words, currentWordIndex, charIndex, handleKeyPress, resetWords,addWords } =
-    useWord();
-  const { timer, isActive, startOrResetTimer, stopTimer } = useTimer({
-    initialTime,
-    onTimerEnd,
+  const keystrokeCount = useRef<number>(0); // Add a ref to track keystrokes
+  const wordTimings = useRef<WordTiming[]>([]);
+
+  const handleWordTiming = (word: Word) => {
+    wordTimings.current.push({ word, timestamp: getElapsedTime() });
+  };
+
+  const resetMetrics = () => {
+    keystrokeCount.current = 0;
+    wordTimings.current = [];
+  };
+
+  const {
+    words,
+    currentWordIndex,
+    charIndex,
+    handleKeyPress,
     resetWords,
-    onTimerReset,
+    addWords,
+    handleMetrics,
+  } = useWord({
+    handleWordTiming,
   });
+
+  const resetFunction = () => {
+    resetMetrics();
+    resetWords();
+  };
+
+  const handleEnd = useCallback(() => {
+    const wpm = Math.floor(keystrokeCount.current / 5 / (initialTime / 60));
+    const wordMetrics = handleMetrics();
+
+    const metrics = {
+      wpm,
+      ...wordMetrics,
+      wordTimings: wordTimings.current,
+      keystrokeCount: keystrokeCount.current,
+      totalTime: initialTime,
+    };
+
+    onTimerEnd(metrics);
+  }, [onTimerEnd, handleMetrics]);
+
+  const { timer, isActive, startOrResetTimer, stopTimer, getElapsedTime } =
+    useTimer({
+      initialTime,
+      onTimerEnd: handleEnd,
+      resetFunction,
+      onTimerReset,
+    });
 
   const handleKeyDown = useCallback(
     (key: string, code: string) => {
       //here i want to check that if timer is not runinng and user presses any alphabet key then start the timer
       if (!isActive && key.match(/[a-zA-Z]/)) {
         startOrResetTimer();
+        return;
       }
+      keystrokeCount.current += 1;
 
       handleKeyPress(key, code);
     },
     [isActive, startOrResetTimer, handleKeyPress]
   );
 
-  const handleAddingLine = (num:number)=>{
+  const handleAddingLine = (num: number) => {
     addWords(num);
-  }
+  };
 
   useKeyDown(handleKeyDown);
 
@@ -55,7 +106,7 @@ const useCounter = ({
     startOrResetTimer,
     isActive,
     stopTimer,
-    handleAddingLine
+    handleAddingLine,
   };
 };
 export default useCounter;

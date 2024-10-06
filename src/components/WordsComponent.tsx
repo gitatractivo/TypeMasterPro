@@ -23,27 +23,27 @@ const WordsComponent = forwardRef<HTMLDivElement>((_, ref) => {
     unregisterOnTimerEnd,
     unregisterOnTimerReset,
     handleAddingLine,
+    metrics,
   } = useWordContext();
   const containerRef = useRef<HTMLDivElement>(null);
-
+  console.log("Metrics: ", metrics);
   useLayoutEffect(() => {
     if (containerRef.current) {
       const container = containerRef.current;
       const lineHeight = parseInt(getComputedStyle(container).lineHeight);
-      const containerHeight = container.getBoundingClientRect().height;
       container.style.height = `${(lineHeight + 2) * 3}px`;
       setLineHeight(lineHeight);
-      // console.log(lineHeight, containerHeight)
+      containerRef.current?.scrollTo(0, 0);
     }
   }, []);
   useLayoutEffect(() => {
     // if currentActive is == visible +2 then scroll to next line change visible to visible +1
     // if currentActive is == visible -1 then scroll to prev line change visible to visible -1
-    
+
     if (currentActive === visible + 2) {
-      handleAddingLine((currentWordIndex+21)/(currentActive+1)+4)
+      handleAddingLine((currentWordIndex + 21) / (currentActive + 1) + 4);
       const vis = visible + 1;
-      containerRef.current?.scrollBy(0, (lineHeight ) +2);
+      containerRef.current?.scrollBy(0, lineHeight + 2);
       setVisible(vis);
     } else if (currentActive === visible - 1) {
       const vis = visible - 1;
@@ -54,7 +54,6 @@ const WordsComponent = forwardRef<HTMLDivElement>((_, ref) => {
   // console.log("currentActive", currentActive, "visible", visible);
 
   const resetScroll = () => {
-
     containerRef.current?.scrollTo(0, 0);
     setVisible(0);
   };
@@ -67,8 +66,6 @@ const WordsComponent = forwardRef<HTMLDivElement>((_, ref) => {
       unregisterOnTimerReset(resetScroll);
     };
   }, [registerOnTimerEnd, unregisterOnTimerEnd]);
-
-  
 
   return (
     <div

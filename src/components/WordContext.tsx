@@ -4,10 +4,18 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useState,
 } from "react";
-import useCounter from "../hooks/useCounter";
+import useCounter, { WordTiming } from "../hooks/useCounter";
 import { DEFAULT_TIMER, TIMER_KEY } from "@/lib/constants";
+
+export type Metrics = {
+  wpm: number;
+  wordTimings: WordTiming[];
+  keystrokeCount: number;
+  [key: string]: any;
+};
 
 interface WordContextType {
   words: Word[];
@@ -18,6 +26,7 @@ interface WordContextType {
   stopTimer: () => void;
   isActive: boolean;
   initialTime: number;
+  metrics?: Metrics;
   updateInitialTime: (newTime: number) => void;
   registerOnTimerEnd: (callback: () => void) => void;
   unregisterOnTimerEnd: (callback: () => void) => void;
@@ -32,6 +41,7 @@ export const WordProvider: React.FC<{
   children: React.ReactNode;
   onTimerEnd: () => void;
 }> = ({ children, onTimerEnd }) => {
+  const [metrics, setMetrics] = useState<Metrics | undefined>();
   const [initialTime, setInitialTimer] = useState<number>(() => {
     const savedTimer = localStorage.getItem(TIMER_KEY);
     return savedTimer ? parseInt(savedTimer, 10) : DEFAULT_TIMER;
@@ -51,11 +61,14 @@ export const WordProvider: React.FC<{
     setTimerEndListeners((prev) => prev.filter((cb) => cb !== callback));
   }, []);
 
-  const handleTimerEnd = useCallback(() => {
-    timerEndListeners.forEach((callback) => callback());
-    if (onTimerEnd) onTimerEnd();
-  }, [timerEndListeners, onTimerEnd]);
-  
+  const handleTimerEnd = useCallback(
+    (metrics: Metrics) => {
+      setMetrics(metrics);
+      timerEndListeners.forEach((callback) => callback());
+      if (onTimerEnd) onTimerEnd();
+    },
+    [timerEndListeners, onTimerEnd]
+  );
 
   const registerOnTimerReset = useCallback((callback: () => void) => {
     setTimerResetListeners((prev) => [...prev, callback]);
@@ -95,6 +108,8 @@ export const WordProvider: React.FC<{
     }
   };
 
+  const metricsMemo = useMemo(() => metrics, [metrics]);
+
   return (
     <WordContext.Provider
       value={{
@@ -112,6 +127,7 @@ export const WordProvider: React.FC<{
         registerOnTimerReset,
         unregisterOnTimerReset,
         handleAddingLine,
+        metrics: metricsMemo,
       }}
     >
       {children}

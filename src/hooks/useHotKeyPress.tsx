@@ -1,4 +1,4 @@
-import  { useEffect, useRef } from 'react';
+import { useEffect, useRef } from "react";
 
 const useHotKeyPress = (bindings: string[], callback: () => void) => {
   const pressedKeys = useRef<string[]>([]);
@@ -32,12 +32,12 @@ const useHotKeyPress = (bindings: string[], callback: () => void) => {
   };
 
   useEffect(() => {
-    window.addEventListener('keydown', keyDownHandler);
-    window.addEventListener('keyup', keyUpHandler);
+    window.addEventListener("keydown", keyDownHandler);
+    window.addEventListener("keyup", keyUpHandler);
 
     return () => {
-      window.removeEventListener('keydown', keyDownHandler);
-      window.removeEventListener('keyup', keyUpHandler);
+      window.removeEventListener("keydown", keyDownHandler);
+      window.removeEventListener("keyup", keyUpHandler);
     };
   }, [bindings, callback]);
 

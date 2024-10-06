@@ -1,15 +1,23 @@
 import { INITIAL_WORDS_NUMBER } from "@/lib/constants";
 import { generateWords } from "@/lib/utils";
 import type { Char, Word } from "@/types";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-const useWord = () => {
+type useWordProps = {
+  handleWordTiming: (word: Word) => void;
+};
+
+const useWord = ({ handleWordTiming }: useWordProps) => {
   const [words, setWords] = useState<Word[]>(
     generateWords(INITIAL_WORDS_NUMBER)
   );
   const [currentWordIndex, setCurrentWordIndex] = useState<number>(0);
   const [wordTyped, setWordTyped] = useState<string>("");
   const [keyState, setKeyState] = useState<"spac" | "inc" | "dec">("spac");
+  const correctGuesses = useRef<number>(0);
+  const incorrectGuesses = useRef<number>(0);
+  const extraCharsCount = useRef<number>(0);
+  const mismatchedCharsCount = useRef<number>(0);
 
   const charIndex = useMemo(() => (wordTyped ?? "").length - 1, [wordTyped]);
 
@@ -51,7 +59,7 @@ const useWord = () => {
       console.log(error);
     }
   }, [wordTyped]);
-  // console.log("words", words)
+
 
   const updateChar = useCallback(
     (chars: Char[], index: number, isCorrect: boolean): Char[] => {
@@ -151,6 +159,23 @@ const useWord = () => {
     }
     setWords(newWords);
 
+    // Update correct and incorrect guesses
+    if (isCorrect) {
+      correctGuesses.current += 1;
+      handleWordTiming(newWords[currentWordIndex]);
+    } else {
+      incorrectGuesses.current += 1;
+      extraCharsCount.current += newWords[currentWordIndex].extra.length;
+
+      // Calculate mismatched characters
+      const mismatchedChars = wordTyped
+        .split("")
+        .reduce((count, char, index) => {
+          return char !== word[index] ? count + 1 : count;
+        }, 0);
+      mismatchedCharsCount.current += mismatchedChars;
+    }
+
     setCurrentWordIndex(currentWordIndex + 1);
     setKeyState("spac");
     setWordTyped("");
@@ -160,6 +185,17 @@ const useWord = () => {
     if (!wordTyped) {
       if (currentWordIndex > 0 && words[currentWordIndex].isPrevWrong) {
         const newWords = [...words];
+        const previousWord = newWords[currentWordIndex - 1];
+
+        // Subtract extra characters and mismatched characters from the current word
+        incorrectGuesses.current -= 1;
+        extraCharsCount.current -= previousWord.extra.length;
+
+        const mismatchedChars = previousWord.chars.reduce((count, char) => {
+          return char.isGuessed && !char.isCorrect ? count + 1 : count;
+        }, 0);
+        mismatchedCharsCount.current -= mismatchedChars;
+
         newWords[currentWordIndex] = {
           ...newWords[currentWordIndex],
           isPrevWrong: false,
@@ -169,7 +205,7 @@ const useWord = () => {
           isGuessed: false,
         };
         setWords(newWords);
-        // console.log(newWords[currentWordIndex - 1]);
+
         const word =
           newWords[currentWordIndex - 1].chars
             .filter((c) => c.isGuessed)
@@ -187,20 +223,34 @@ const useWord = () => {
   };
 
   const resetWords = () => {
-    setWords([])
+    setWords([]);
     const gernerated = generateWords(INITIAL_WORDS_NUMBER);
-    console.log(gernerated);
+
     setWords(gernerated);
     setCurrentWordIndex(0);
     setWordTyped("");
+
+    correctGuesses.current = 0;
+    incorrectGuesses.current = 0;
+    extraCharsCount.current = 0;
+    mismatchedCharsCount.current = 0;
   };
 
-  const addWords =(num:number)=>{
-    console.log("added words",num);
+  const addWords = (num: number) => {
     const gernerated = generateWords(num);
-    console.log(gernerated);
-    setWords([...words,...gernerated]);
-  }
+    setWords([...words, ...gernerated]);
+  };
+
+  const handleMetrics = () => {
+    const metrics = {
+      correctGuesses: correctGuesses.current,
+      incorrectGuesses: incorrectGuesses.current,
+      extraCharsCount: extraCharsCount.current,
+      mismatchedCharsCount: mismatchedCharsCount.current,
+      totalGuesses: correctGuesses.current + incorrectGuesses.current,
+    };
+    return metrics;
+  };
 
   return {
     words,
@@ -208,7 +258,8 @@ const useWord = () => {
     charIndex,
     handleKeyPress,
     resetWords,
-    addWords
+    addWords,
+    handleMetrics,
   };
 };
 
