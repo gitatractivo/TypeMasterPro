@@ -6,7 +6,7 @@ import {
   useEffect,
   useState,
 } from "react";
-import useCounter, { useCounterProps } from "../hooks/useCounter";
+import useCounter from "../hooks/useCounter";
 import { DEFAULT_TIMER, TIMER_KEY } from "@/lib/constants";
 
 interface WordContextType {
@@ -23,6 +23,7 @@ interface WordContextType {
   unregisterOnTimerEnd: (callback: () => void) => void;
   registerOnTimerReset: (callback: () => void) => void;
   unregisterOnTimerReset: (callback: () => void) => void;
+  handleAddingLine: (num: number) => void;
 }
 
 const WordContext = createContext<WordContextType | undefined>(undefined);
@@ -76,6 +77,7 @@ export const WordProvider: React.FC<{
     startOrResetTimer,
     isActive,
     stopTimer,
+    handleAddingLine,
   } = useCounter({
     initialTime,
     onTimerEnd: handleTimerEnd,
@@ -109,6 +111,7 @@ export const WordProvider: React.FC<{
         unregisterOnTimerEnd,
         registerOnTimerReset,
         unregisterOnTimerReset,
+        handleAddingLine,
       }}
     >
       {children}

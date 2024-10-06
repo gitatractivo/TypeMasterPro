@@ -195,12 +195,20 @@ const useWord = () => {
     setWordTyped("");
   };
 
+  const addWords =(num:number)=>{
+    console.log("added words",num);
+    const gernerated = generateWords(num);
+    console.log(gernerated);
+    setWords([...words,...gernerated]);
+  }
+
   return {
     words,
     currentWordIndex,
     charIndex,
     handleKeyPress,
     resetWords,
+    addWords
   };
 };
 

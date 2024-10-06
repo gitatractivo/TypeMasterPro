@@ -14,7 +14,7 @@ const useCounter = ({
   onTimerEnd,
   onTimerReset,
 }: useCounterProps) => {
-  const { words, currentWordIndex, charIndex, handleKeyPress, resetWords } =
+  const { words, currentWordIndex, charIndex, handleKeyPress, resetWords,addWords } =
     useWord();
   const { timer, isActive, startOrResetTimer, stopTimer } = useTimer({
     initialTime,
@@ -35,6 +35,10 @@ const useCounter = ({
     [isActive, startOrResetTimer, handleKeyPress]
   );
 
+  const handleAddingLine = (num:number)=>{
+    addWords(num);
+  }
+
   useKeyDown(handleKeyDown);
 
   useEffect(() => {
@@ -51,6 +55,7 @@ const useCounter = ({
     startOrResetTimer,
     isActive,
     stopTimer,
+    handleAddingLine
   };
 };
 export default useCounter;
