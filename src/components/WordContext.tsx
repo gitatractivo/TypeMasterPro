@@ -1,9 +1,13 @@
 import { Word } from "@/types";
-import { createContext, useContext, useEffect, useState } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import useCounter, { useCounterProps } from "../hooks/useCounter";
-
-const DEFAULT_TIMER = 60; // 60 seconds
-const TIMER_KEY = "typing_game_timer";
+import { DEFAULT_TIMER, TIMER_KEY } from "@/lib/constants";
 
 interface WordContextType {
   words: Word[];
@@ -15,6 +19,10 @@ interface WordContextType {
   isActive: boolean;
   initialTime: number;
   updateInitialTime: (newTime: number) => void;
+  registerOnTimerEnd: (callback: () => void) => void;
+  unregisterOnTimerEnd: (callback: () => void) => void;
+  registerOnTimerReset: (callback: () => void) => void;
+  unregisterOnTimerReset: (callback: () => void) => void;
 }
 
 const WordContext = createContext<WordContextType | undefined>(undefined);
@@ -27,6 +35,39 @@ export const WordProvider: React.FC<{
     const savedTimer = localStorage.getItem(TIMER_KEY);
     return savedTimer ? parseInt(savedTimer, 10) : DEFAULT_TIMER;
   });
+  const [timerEndListeners, setTimerEndListeners] = useState<(() => void)[]>(
+    []
+  );
+  const [timerResetListeners, setTimerResetListeners] = useState<
+    (() => void)[]
+  >([]);
+
+  const registerOnTimerEnd = useCallback((callback: () => void) => {
+    setTimerEndListeners((prev) => [...prev, callback]);
+  }, []);
+
+  const unregisterOnTimerEnd = useCallback((callback: () => void) => {
+    setTimerEndListeners((prev) => prev.filter((cb) => cb !== callback));
+  }, []);
+
+  const handleTimerEnd = useCallback(() => {
+    timerEndListeners.forEach((callback) => callback());
+    if (onTimerEnd) onTimerEnd();
+  }, [timerEndListeners, onTimerEnd]);
+  
+
+  const registerOnTimerReset = useCallback((callback: () => void) => {
+    setTimerResetListeners((prev) => [...prev, callback]);
+  }, []);
+
+  const unregisterOnTimerReset = useCallback((callback: () => void) => {
+    setTimerResetListeners((prev) => prev.filter((cb) => cb !== callback));
+  }, []);
+
+  const handleTimerReset = useCallback(() => {
+    timerResetListeners.forEach((callback) => callback());
+  }, [timerResetListeners]);
+
   const {
     words,
     currentWordIndex,
@@ -35,7 +76,11 @@ export const WordProvider: React.FC<{
     startOrResetTimer,
     isActive,
     stopTimer,
-  } = useCounter({ initialTime, onTimerEnd });
+  } = useCounter({
+    initialTime,
+    onTimerEnd: handleTimerEnd,
+    onTimerReset: handleTimerReset,
+  });
   useEffect(() => {
     localStorage.setItem(TIMER_KEY, initialTime.toString());
   }, [initialTime]);
@@ -60,6 +105,10 @@ export const WordProvider: React.FC<{
         stopTimer,
         initialTime,
         updateInitialTime,
+        registerOnTimerEnd,
+        unregisterOnTimerEnd,
+        registerOnTimerReset,
+        unregisterOnTimerReset,
       }}
     >
       {children}
@@ -74,4 +123,3 @@ export const useWordContext = () => {
   }
   return context;
 };
-

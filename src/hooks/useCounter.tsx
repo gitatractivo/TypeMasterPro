@@ -3,15 +3,24 @@ import useKeyDown from "./useKeyDown";
 import { useTimer } from "./useTimer";
 import useWord from "./useWord";
 
-export type useCounterProps = { initialTime: number; onTimerEnd: () => void };
+export type useCounterProps = {
+  initialTime: number;
+  onTimerEnd: () => void;
+  onTimerReset: () => void;
+};
 
-const useCounter = ({ initialTime, onTimerEnd }: useCounterProps) => {
+const useCounter = ({
+  initialTime,
+  onTimerEnd,
+  onTimerReset,
+}: useCounterProps) => {
   const { words, currentWordIndex, charIndex, handleKeyPress, resetWords } =
     useWord();
   const { timer, isActive, startOrResetTimer, stopTimer } = useTimer({
     initialTime,
     onTimerEnd,
     resetWords,
+    onTimerReset,
   });
 
   const handleKeyDown = useCallback(

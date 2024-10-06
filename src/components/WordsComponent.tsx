@@ -7,7 +7,7 @@ const WordsComponent = forwardRef<HTMLDivElement>((_, ref) => {
   const [currentActive, setCurrentActive] = useState<number>(0)
   const [visible, setVisible] = useState<number>(0);
   const [lineHeight, setLineHeight] = useState<number>(0);
-  const { words, currentWordIndex, charIndex, isActive } = useWordContext();
+  const { words, currentWordIndex, charIndex, isActive ,registerOnTimerEnd,registerOnTimerReset,unregisterOnTimerEnd,unregisterOnTimerReset} = useWordContext();
   const containerRef = useRef<HTMLDivElement>(null);
 
   useLayoutEffect(()=>{
@@ -20,25 +20,48 @@ const WordsComponent = forwardRef<HTMLDivElement>((_, ref) => {
       // console.log(lineHeight, containerHeight)
     }
   },[])
-  useEffect(() => {
+  useLayoutEffect(() => {
     // if currentActive is == visible +2 then scroll to next line change visible to visible +1
     // if currentActive is == visible -1 then scroll to prev line change visible to visible -1
-
+    console.log("uselayout running for currentActive", currentActive, "visible", visible);
     if (currentActive === visible + 2) {
-      containerRef.current?.scrollBy(0, lineHeight+2);
-      setVisible(visible + 1);
+      console.log("running for currentActive", currentActive, "visible", visible);
+      const vis = visible + 1;
+      containerRef.current?.scrollBy(0,( lineHeight+3)*vis+2);
+      setVisible(vis);
     } else if (currentActive === visible - 1) {
+      const vis = visible - 1;
       containerRef.current?.scrollBy(0, -(lineHeight+2));
-      setVisible(visible - 1);
+      setVisible(vis);
     }
-  }, [words, currentActive]);
+    
+    
+  }, [ currentActive]);
+  // console.log("currentActive", currentActive, "visible", visible);
 
+  const resetScroll = () => {
+    console.log("resetting scroll");
+    containerRef.current?.scrollTo(0,0);
+    setVisible(0);
+  }
+  useEffect(() => {
+    
+
+    registerOnTimerEnd(resetScroll);
+    registerOnTimerReset(resetScroll);
+
+    return () => {
+      unregisterOnTimerEnd(resetScroll);
+      unregisterOnTimerReset(resetScroll);
+    };
+  }, [registerOnTimerEnd, unregisterOnTimerEnd]);
+  
   return (
     <div
       ref={ref}
       tabIndex={0}
       className={cn(
-        "bg-cyan-300  overflow-hidden p-3 w-4/5 h-fit  mx-auto    gap-1 text-lg font-semibold ",
+        "bg-cyan-300  overflow-hidden p-3 w-4/5 h-fit  mx-auto  maincontainer  gap-1 text-lg font-semibold ",
         !isActive && "filter blur-sm "
       )}
     >

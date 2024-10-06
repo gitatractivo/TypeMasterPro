@@ -3,6 +3,7 @@ import { useState, useRef, useCallback, useEffect } from "react";
 export type UseTimerProps = {
   initialTime: number;
   onTimerEnd: () => void;
+  onTimerReset: () => void;
   resetWords: () => void;
 };
 
@@ -10,6 +11,7 @@ export const useTimer = ({
   initialTime,
   onTimerEnd,
   resetWords,
+  onTimerReset,
 }: UseTimerProps) => {
   const [countDown, setCountDown] = useState<number>(initialTime * 1000);
   const [isActive, setIsActive] = useState<boolean>(false);
@@ -26,6 +28,9 @@ export const useTimer = ({
 
     if (intervalRef.current) {
       clearInterval(intervalRef.current);
+      onTimerReset();
+    
+
       resetWords();
     }
 

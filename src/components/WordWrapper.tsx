@@ -18,27 +18,34 @@ const WordWrapper = ({ word, isCurrent, charIndex ,currentActive,setCurrentActiv
 
   useEffect(() => {
     if (wordRef.current) {
-      const rect = wordRef.current.getBoundingClientRect();
+      const wordElement = wordRef.current;
+      const parentElement = wordElement.parentElement;
 
-      const parentRect = wordRef.current.parentElement?.getBoundingClientRect();
-      if (parentRect) {
-        const distanceFromTop = rect.top - parentRect.top;
-        const lineHeight = rect.height;
-        const lineNumber = Math.floor(distanceFromTop / lineHeight) ;
-        console.log(`Word: ${word.word}, Line: ${lineNumber}`);
-        if(lineNumber!==currentActive){
-          setCurrentActive(lineNumber)
+      if (parentElement) {
+        const parentRect = parentElement.getBoundingClientRect();
+        const wordRect = wordElement.getBoundingClientRect();
+
+        // Calculate the word's position relative to the parent's top, accounting for scroll
+        const relativeTop =
+          wordRect.top - parentRect.top + parentElement.scrollTop;
+
+        const lineHeight = wordRect.height;
+        const lineNumber = Math.floor(relativeTop / lineHeight);
+
+        // console.log(`Word: ${word.word}, Line: ${lineNumber}`);
+
+        if (lineNumber !== currentActive) {
+          setCurrentActive(lineNumber);
         }
-        
       }
     }
-  }, [word]);
+  }, [word, ]);
 
   return (
     <span
       ref={wordRef}
       className={cn(
-        " break-words px-[1px] text-nowrap border-l-2 tracking-tighter border-transparent",
+        " break-words box-border px-[1px] text-nowrap border-l-2 tracking-tighter border-transparent",
         isActive && charIndex === -1 && isCurrent && " border-l-black cursor",
         word.isGuessed && !word.isCorrect && "border-b-2 border-b-red-700"
       )}

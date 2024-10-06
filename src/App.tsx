@@ -4,10 +4,14 @@ import { WordProvider } from "./components/WordContext";
 
 function App() {
 
-  
+  const onTimerEnd = ()=>{
+    const maincontainer = document.querySelector(".maincontainer");
+    
+  }
+
 
   return (
-    <WordProvider  onTimerEnd={()=>{console.log("Timer Ended")}}>
+    <WordProvider  onTimerEnd={onTimerEnd}>
       <TypingScreenComponent />
     </WordProvider>
   );
