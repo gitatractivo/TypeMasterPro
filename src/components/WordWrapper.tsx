@@ -1,21 +1,44 @@
-import { cn } from "@/lib/utils";
+import { cn,  } from "@/lib/utils";
 import { Word } from "@/types";
 import CharWrapper from "./CharWrapper";
 import { useWordContext } from "./WordContext";
+import { useEffect, useRef } from "react";
 
 type WordWrapperProps = {
   word: Word;
   isCurrent: boolean;
   charIndex: number;
+  currentActive: number;
+  setCurrentActive: (index: number) => void;
 };
 
-const WordWrapper = ({ word, isCurrent, charIndex }: WordWrapperProps) => {
+const WordWrapper = ({ word, isCurrent, charIndex ,currentActive,setCurrentActive}: WordWrapperProps) => {
   const { isActive } = useWordContext();
+  const wordRef = useRef<HTMLSpanElement>(null);
+
+  useEffect(() => {
+    if (wordRef.current) {
+      const rect = wordRef.current.getBoundingClientRect();
+
+      const parentRect = wordRef.current.parentElement?.getBoundingClientRect();
+      if (parentRect) {
+        const distanceFromTop = rect.top - parentRect.top;
+        const lineHeight = rect.height;
+        const lineNumber = Math.floor(distanceFromTop / lineHeight) ;
+        console.log(`Word: ${word.word}, Line: ${lineNumber}`);
+        if(lineNumber!==currentActive){
+          setCurrentActive(lineNumber)
+        }
+        
+      }
+    }
+  }, [word]);
 
   return (
-    <div
+    <span
+      ref={wordRef}
       className={cn(
-        "flex break-words border-l-2 tracking-tighter border-transparent",
+        " break-words px-[1px] text-nowrap border-l-2 tracking-tighter border-transparent",
         isActive && charIndex === -1 && isCurrent && " border-l-black cursor",
         word.isGuessed && !word.isCorrect && "border-b-2 border-b-red-700"
       )}
@@ -33,7 +56,7 @@ const WordWrapper = ({ word, isCurrent, charIndex }: WordWrapperProps) => {
           {word.extra}
         </span>
       )}
-    </div>
+    </span>
   );
 };
 

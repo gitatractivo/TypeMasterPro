@@ -187,7 +187,10 @@ const useWord = () => {
   };
 
   const resetWords = () => {
-    setWords(generateWords(INITIAL_WORDS_NUMBER));
+    setWords([])
+    const gernerated = generateWords(INITIAL_WORDS_NUMBER);
+    console.log(gernerated);
+    setWords(gernerated);
     setCurrentWordIndex(0);
     setWordTyped("");
   };

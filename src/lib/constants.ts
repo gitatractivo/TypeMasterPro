@@ -1,1 +1,1 @@
-export const INITIAL_WORDS_NUMBER = 30;
+export const INITIAL_WORDS_NUMBER = 50;
