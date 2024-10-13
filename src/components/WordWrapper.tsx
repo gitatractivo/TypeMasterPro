@@ -32,14 +32,12 @@ const WordWrapper = ({ word, isCurrent, charIndex ,currentActive,setCurrentActiv
         const lineHeight = wordRect.height;
         const lineNumber = Math.floor(relativeTop / lineHeight);
 
-        // console.log(`Word: ${word.word}, Line: ${lineNumber}`);
-
         if (lineNumber !== currentActive) {
           setCurrentActive(lineNumber);
         }
       }
     }
-  }, [word, ]);
+  }, [word ]);
 
   return (
     <span

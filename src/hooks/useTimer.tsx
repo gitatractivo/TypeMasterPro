@@ -19,7 +19,6 @@ export const useTimer = ({
   const startTime = useRef<number | null>(null);
 
   const startTimer = useCallback(() => {
-    console.log("starting timer");
     if (initialTime <= 0) {
       throw new Error("Initial time must be greater than zero");
     }
@@ -81,7 +80,6 @@ export const useTimer = ({
       const totalSeconds = Math.floor(ms / 1000);
       const minutes = Math.floor(totalSeconds / 60);
       const seconds = totalSeconds % 60;
-      console.log("totalSeconds", totalSeconds);
       if(totalSeconds>=60){
         return `${minutes.toString().padStart(2, "0")}:${seconds
           .toString()

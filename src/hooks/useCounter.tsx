@@ -74,9 +74,6 @@ const useCounter = ({
 
   const handleKeyDown = useCallback(
     (key: string, code: string) => {
-      //here i want to check that if timer is not runinng and user presses any alphabet key then start the timer
-      console.log("key", key);
-      //start only if timer is not running and enter key is pressed
       if (!isActive && key === "Enter") {
         startTimer();
         return;

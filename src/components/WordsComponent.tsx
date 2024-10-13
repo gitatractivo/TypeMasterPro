@@ -51,11 +51,10 @@ const WordsComponent = forwardRef<HTMLDivElement>((_, ref) => {
       setVisible(vis);
     }
   }, [currentActive]);
-  // console.log("currentActive", currentActive, "visible", visible);
+
 
   const resetScroll = () => {
     containerRef.current?.scrollTo(0, 0);
-    console.log("reset ran",containerRef.current?.scrollTop);
     setCurrentActive(0);
 
     setVisible(0);
