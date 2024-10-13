@@ -1,4 +1,4 @@
-import { useRef,  } from "react";
+import { useEffect, useRef,  } from "react";
 import { useWordContext } from "./WordContext";
 import WordsComponent from "./WordsComponent";
 import { cn } from "@/lib/utils";
@@ -9,18 +9,25 @@ const TIMERS = [
 ]
 
 const TypingScreenComponent = () => {
-  const { timer, startOrResetTimer, initialTime, updateInitialTime } =
+  const { timer, resetTimer, initialTime, updateInitialTime ,isActive} =
     useWordContext();
   const buttonRef = useRef<HTMLButtonElement>(null);
   const wordsComponentRef = useRef<HTMLDivElement>(null);
+  const handleShiftFocus =()=>{
+    if (buttonRef.current) buttonRef.current.blur();
+    if (wordsComponentRef.current) wordsComponentRef.current.focus();
+  }
 
   const handleClick = () => {
-    startOrResetTimer();
-    // Remove focus from the button after it's clicked
-    if (buttonRef.current) buttonRef.current.blur();
-    // Set focus on the WordsComponent after the button is clicked
-    if (wordsComponentRef.current) wordsComponentRef.current.focus();
+    resetTimer();
+    handleShiftFocus();
   };
+  useEffect(() => {
+    if (isActive) {
+      handleShiftFocus();
+    }
+  }
+  , [isActive]);
 
   return (
     <div className="w-screen h-screen flex flex-col justify-center items-center bg-cyan-500 gap-4">
@@ -42,7 +49,7 @@ const TypingScreenComponent = () => {
       </div>
       <h1 className="font-semibold">{timer}</h1>
       <WordsComponent ref={wordsComponentRef} />
-      <button ref={buttonRef} onClick={handleClick} className="p-2">
+      <button ref={buttonRef} onClick={handleClick} className="p-2 focus-visible:border-2 focus-visible:border-black">
         <RefreshCcw  className="h-4 w-4" />
       </button>
     </div>

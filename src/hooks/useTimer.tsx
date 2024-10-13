@@ -18,7 +18,7 @@ export const useTimer = ({
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const startTime = useRef<number | null>(null);
 
-  const startOrResetTimer = useCallback(() => {
+  const startTimer = useCallback(() => {
     console.log("starting timer");
     if (initialTime <= 0) {
       throw new Error("Initial time must be greater than zero");
@@ -29,12 +29,7 @@ export const useTimer = ({
     setIsActive(true);
     setCountDown(initialTime * 1000);
 
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current);
-      onTimerReset();
-
-      resetFunction();
-    }
+    
 
     intervalRef.current = setInterval(() => {
       
@@ -49,6 +44,16 @@ export const useTimer = ({
       });
     }, 1000);
     startTime.current = Date.now();
+  }, [initialTime, onTimerEnd]);
+
+  const resetTimer = useCallback(() => {
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      setIsActive(false);
+    }
+    setCountDown(initialTime * 1000);
+    onTimerReset();
+    resetFunction();
   }, [initialTime, onTimerEnd]);
 
   const stopTimer = useCallback(() => {
@@ -76,7 +81,13 @@ export const useTimer = ({
       const totalSeconds = Math.floor(ms / 1000);
       const minutes = Math.floor(totalSeconds / 60);
       const seconds = totalSeconds % 60;
-      return `${minutes.toString().padStart(2, "0")}:${seconds
+      console.log("totalSeconds", totalSeconds);
+      if(totalSeconds>=60){
+        return `${minutes.toString().padStart(2, "0")}:${seconds
+          .toString()
+          .padStart(2, "0")}`;
+      }
+      return `${seconds
         .toString()
         .padStart(2, "0")}`;
     },
@@ -91,9 +102,10 @@ export const useTimer = ({
   return {
     timer: formatTime(countDown),
     isActive,
-    startOrResetTimer,
+    startTimer,
     stopTimer,
     getElapsedTime,
+    resetTimer,
 
   };
 };

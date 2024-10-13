@@ -64,7 +64,7 @@ const useCounter = ({
     onTimerEnd(metrics);
   }, [onTimerEnd, handleMetrics]);
 
-  const { timer, isActive, startOrResetTimer, stopTimer, getElapsedTime } =
+  const { timer, isActive, startTimer, stopTimer, getElapsedTime, resetTimer } =
     useTimer({
       initialTime,
       onTimerEnd: handleEnd,
@@ -75,15 +75,19 @@ const useCounter = ({
   const handleKeyDown = useCallback(
     (key: string, code: string) => {
       //here i want to check that if timer is not runinng and user presses any alphabet key then start the timer
-      if (!isActive && key.match(/[a-zA-Z]/)) {
-        startOrResetTimer();
+      console.log("key", key);
+      //start only if timer is not running and enter key is pressed
+      if (!isActive && key === "Enter") {
+        startTimer();
         return;
       }
-      keystrokeCount.current += 1;
+      if(isActive ){
 
-      handleKeyPress(key, code);
+        keystrokeCount.current += 1;
+        handleKeyPress(key, code);
+      }
     },
-    [isActive, startOrResetTimer, handleKeyPress]
+    [isActive, startTimer, handleKeyPress]
   );
 
   const handleAddingLine = (num: number) => {
@@ -103,7 +107,8 @@ const useCounter = ({
     currentWordIndex,
     charIndex,
     timer,
-    startOrResetTimer,
+    startTimer,
+    resetTimer,
     isActive,
     stopTimer,
     handleAddingLine,

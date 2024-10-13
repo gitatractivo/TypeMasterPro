@@ -22,7 +22,8 @@ interface WordContextType {
   currentWordIndex: number;
   charIndex: number;
   timer: string;
-  startOrResetTimer: () => void;
+  startTimer: () => void;
+  resetTimer: () => void;
   stopTimer: () => void;
   isActive: boolean;
   initialTime: number;
@@ -87,10 +88,11 @@ export const WordProvider: React.FC<{
     currentWordIndex,
     charIndex,
     timer,
-    startOrResetTimer,
+    startTimer,
     isActive,
     stopTimer,
     handleAddingLine,
+    resetTimer,
   } = useCounter({
     initialTime,
     onTimerEnd: handleTimerEnd,
@@ -103,6 +105,7 @@ export const WordProvider: React.FC<{
   const updateInitialTime = (newTime: number) => {
     if (newTime > 0) {
       setInitialTimer(newTime);
+      isActive && resetTimer();
     } else {
       console.error("Initial timer must be greater than 0");
     }
@@ -117,7 +120,7 @@ export const WordProvider: React.FC<{
         currentWordIndex,
         charIndex,
         timer,
-        startOrResetTimer,
+        startTimer,
         isActive,
         stopTimer,
         initialTime,
@@ -128,6 +131,7 @@ export const WordProvider: React.FC<{
         unregisterOnTimerReset,
         handleAddingLine,
         metrics: metricsMemo,
+        resetTimer,
       }}
     >
       {children}

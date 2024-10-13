@@ -55,6 +55,9 @@ const WordsComponent = forwardRef<HTMLDivElement>((_, ref) => {
 
   const resetScroll = () => {
     containerRef.current?.scrollTo(0, 0);
+    console.log("reset ran",containerRef.current?.scrollTop);
+    setCurrentActive(0);
+
     setVisible(0);
   };
   useEffect(() => {
@@ -66,19 +69,35 @@ const WordsComponent = forwardRef<HTMLDivElement>((_, ref) => {
       unregisterOnTimerReset(resetScroll);
     };
   }, [registerOnTimerEnd, unregisterOnTimerEnd]);
+  useEffect(()=>{
+    if(isActive){
+      // focus on container with tabindex 0
+
+    }
+  },[isActive])
 
   return (
     <div
       ref={ref}
       tabIndex={0}
       className={cn(
-        "bg-cyan-300  overflow-hidden p-3 w-4/5 h-fit  mx-auto  maincontainer  gap-1 text-lg font-semibold ",
-        !isActive && "filter blur-sm "
+        "bg-cyan-300 relative overflow-hidden p-3 w-4/5 h-fit  mx-auto  maincontainer  gap-1 text-lg font-semibold "
       )}
     >
       <div
+        className={cn(
+          "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-transparent w-fit h-fit ",
+          isActive && "hidden"
+        )}
+      >
+        Press Enter to start
+      </div>
+      <div
         ref={containerRef}
-        className="overflow-hidden w-full h-fit flex flex-wrap"
+        className={cn(
+          "overflow-hidden w-full h-fit flex flex-wrap",
+          !isActive && "filter blur-[3px] "
+        )}
       >
         {words.map((w, ind) => (
           <WordWrapper
