@@ -4,6 +4,8 @@ import CharWrapper from "./CharWrapper";
 import { useWordContext } from "./WordContext";
 import { useEffect, useRef } from "react";
 
+const LINE_HEIGHT = 32;
+
 type WordWrapperProps = {
   word: Word;
   isCurrent: boolean;
@@ -29,8 +31,12 @@ const WordWrapper = ({ word, isCurrent, charIndex ,currentActive,setCurrentActiv
         const relativeTop =
           wordRect.top - parentRect.top + parentElement.scrollTop;
 
-        const lineHeight = wordRect.height;
+        const lineHeight = LINE_HEIGHT + 2 + 16;//border bottom and margin
         const lineNumber = Math.floor(relativeTop / lineHeight);
+
+        console.log("reset:",lineHeight,lineNumber)
+
+
 
         if (lineNumber !== currentActive) {
           setCurrentActive(lineNumber);
@@ -43,9 +49,13 @@ const WordWrapper = ({ word, isCurrent, charIndex ,currentActive,setCurrentActiv
     <span
       ref={wordRef}
       className={cn(
-        " break-words box-border px-[1px] text-nowrap border-l-2 tracking-tighter border-transparent",
-        isActive && charIndex === -1 && isCurrent && " border-l-black cursor",
-        word.isGuessed && !word.isCorrect && "border-b-2 border-b-red-700"
+        "break-words box-border mx-[9.6px]    border-b-2 border-b-transparent text-nowrap border-l-2 tracking-tighter border-transparent",
+        isActive &&
+          charIndex === -1 &&
+          isCurrent &&
+          " border-l-[var(--cursor)] cursor",
+        word.isGuessed && !word.isCorrect && " border-b-[var(--error)]",
+        `leading-[${LINE_HEIGHT}px]`
       )}
     >
       {word.chars.map((ch, ind) => (

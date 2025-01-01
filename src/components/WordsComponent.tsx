@@ -31,7 +31,9 @@ const WordsComponent = forwardRef<HTMLDivElement>((_, ref) => {
     if (containerRef.current) {
       const container = containerRef.current;
       const lineHeight = parseInt(getComputedStyle(container).lineHeight);
-      container.style.height = `${(lineHeight + 2) * 3}px`;
+      console.log("Line Height: ", lineHeight);
+      // container.style.height = `${(50 ) * 3}px`;
+      container.style.height="158px";
       setLineHeight(lineHeight);
       containerRef.current?.scrollTo(0, 0);
     }
@@ -39,8 +41,9 @@ const WordsComponent = forwardRef<HTMLDivElement>((_, ref) => {
   useLayoutEffect(() => {
     // if currentActive is == visible +2 then scroll to next line change visible to visible +1
     // if currentActive is == visible -1 then scroll to prev line change visible to visible -1
-
+    console.log("scroll reset called", currentActive, visible);
     if (currentActive === visible + 2) {
+      console.log("reset shift")
       handleAddingLine((currentWordIndex + 21) / (currentActive + 1) + 4);
       const vis = visible + 1;
       containerRef.current?.scrollBy(0, lineHeight + 2);
@@ -53,12 +56,7 @@ const WordsComponent = forwardRef<HTMLDivElement>((_, ref) => {
   }, [currentActive]);
 
 
-  const resetScroll = () => {
-    containerRef.current?.scrollTo(0, 0);
-    setCurrentActive(0);
-
-    setVisible(0);
-  };
+  
   useEffect(() => {
     registerOnTimerEnd(resetScroll);
     registerOnTimerReset(resetScroll);
@@ -75,12 +73,22 @@ const WordsComponent = forwardRef<HTMLDivElement>((_, ref) => {
     }
   },[isActive])
 
+  const resetScroll = () => {
+    
+    containerRef.current?.scrollTo(0, 0);
+    setCurrentActive(0);
+
+    setVisible(0);
+  };
+
+  console.log(window.innerHeight,window.innerWidth,window.outerHeight,window.outerWidth)
+
   return (
     <div
       ref={ref}
       tabIndex={0}
       className={cn(
-        "bg-cyan-300 relative overflow-hidden p-3 w-4/5 h-fit  mx-auto  maincontainer  gap-1 text-lg font-semibold "
+        "focus:outline-none  focus:border-none relative overflow-hidden p-3 w-4/5 xl:min-w-[1020px]  2xl:max-w-[1536px] 2xl:min-w-[1280px] h-fit  mx-auto  maincontainer  gap-1 text-[2rem] font-robotoMono "
       )}
     >
       <div

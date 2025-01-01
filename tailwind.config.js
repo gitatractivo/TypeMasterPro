@@ -18,6 +18,9 @@ module.exports = {
       },
     },
     extend: {
+      fontFamily:{
+        robotoMono: ["Roboto Mono", "monospace"],
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",

@@ -1,3 +1,4 @@
+import { ThemeProvider } from "./components/ThemeContext";
 import TypingScreenComponent from "./components/TypingScreenComponent";
 import { WordProvider } from "./components/WordContext";
 
@@ -7,9 +8,11 @@ function App() {
   };
 
   return (
-    <WordProvider onTimerEnd={onTimerEnd}>
-      <TypingScreenComponent />
-    </WordProvider>
+    <ThemeProvider>
+      <WordProvider onTimerEnd={onTimerEnd}>
+        <TypingScreenComponent />
+      </WordProvider>
+    </ThemeProvider>
   );
 }
 

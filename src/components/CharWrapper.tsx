@@ -13,10 +13,10 @@ const CharWrapper = ({ char, isCurrent }: CharWrapperProps) => {
   return (
     <span
       className={cn(
-        "text-green-700 border-r-2 border-transparent ",
-        isActive && isCurrent && " border-r-black cursor",
-        char.isGuessed && char.isCorrect && "text-cyan-900",
-        char.isGuessed && !char.isCorrect && "text-red-700"
+        "text-[var(--text)] border-r-2 border-transparent",
+        isActive && isCurrent && "border-r-[var(--cursor)] cursor animate-pulse",
+        char.isGuessed && char.isCorrect && "text-[var(--correct)]",
+        char.isGuessed && !char.isCorrect && "text-[var(--error)]"
       )}
     >
       {char.char}
