@@ -1,6 +1,7 @@
 import { cn } from "@/lib/utils";
 import { Char } from "@/types";
 import { useWordContext } from "./WordContext";
+import { useRef, useEffect } from "react";
 
 type CharWrapperProps = {
   char: Char;
@@ -8,13 +9,21 @@ type CharWrapperProps = {
 };
 
 const CharWrapper = ({ char, isCurrent }: CharWrapperProps) => {
-  const { isActive } = useWordContext();
+  const { isActive, updateCursorPosition } = useWordContext();
+  const charRef = useRef<HTMLSpanElement>(null);
+
+  useEffect(() => {
+    if (isActive && isCurrent && charRef.current) {
+      console.log("updating", charRef.current);
+      updateCursorPosition(charRef.current);
+    }
+  }, [isActive, isCurrent]);
 
   return (
     <span
+      ref={charRef}
       className={cn(
-        "text-[var(--text)] border-r-2 border-transparent",
-        isActive && isCurrent && "border-r-[var(--cursor)] cursor animate-pulse",
+        "text-[var(--text)] relative",
         char.isGuessed && char.isCorrect && "text-[var(--correct)]",
         char.isGuessed && !char.isCorrect && "text-[var(--error)]"
       )}

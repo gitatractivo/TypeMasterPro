@@ -8,11 +8,13 @@ import {
   useRef,
   useState,
 } from "react";
+import Cursor from "./Cursor";
 
 const WordsComponent = forwardRef<HTMLDivElement>((_, ref) => {
   const [currentActive, setCurrentActive] = useState<number>(0);
   const [visible, setVisible] = useState<number>(0);
   const [lineHeight, setLineHeight] = useState<number>(0);
+  const [cursorPosition, setCursorPosition] = useState({ top: 0, left: 0 });
   const {
     words,
     currentWordIndex,
@@ -33,7 +35,7 @@ const WordsComponent = forwardRef<HTMLDivElement>((_, ref) => {
       const lineHeight = parseInt(getComputedStyle(container).lineHeight);
       console.log("Line Height: ", lineHeight);
       // container.style.height = `${(50 ) * 3}px`;
-      container.style.height="158px";
+      container.style.height = "158px";
       setLineHeight(lineHeight);
       containerRef.current?.scrollTo(0, 0);
     }
@@ -43,7 +45,7 @@ const WordsComponent = forwardRef<HTMLDivElement>((_, ref) => {
     // if currentActive is == visible -1 then scroll to prev line change visible to visible -1
     console.log("scroll reset called", currentActive, visible);
     if (currentActive === visible + 2) {
-      console.log("reset shift")
+      console.log("reset shift");
       handleAddingLine((currentWordIndex + 21) / (currentActive + 1) + 4);
       const vis = visible + 1;
       containerRef.current?.scrollBy(0, lineHeight + 2);
@@ -55,8 +57,6 @@ const WordsComponent = forwardRef<HTMLDivElement>((_, ref) => {
     }
   }, [currentActive]);
 
-
-  
   useEffect(() => {
     registerOnTimerEnd(resetScroll);
     registerOnTimerReset(resetScroll);
@@ -66,22 +66,33 @@ const WordsComponent = forwardRef<HTMLDivElement>((_, ref) => {
       unregisterOnTimerReset(resetScroll);
     };
   }, [registerOnTimerEnd, unregisterOnTimerEnd]);
-  useEffect(()=>{
-    if(isActive){
+  useEffect(() => {
+    if (isActive) {
       // focus on container with tabindex 0
-
     }
-  },[isActive])
+  }, [isActive]);
 
   const resetScroll = () => {
-    
     containerRef.current?.scrollTo(0, 0);
     setCurrentActive(0);
 
     setVisible(0);
   };
 
-  console.log(window.innerHeight,window.innerWidth,window.outerHeight,window.outerWidth)
+  const updateCursorPosition = (element: HTMLElement) => {
+    const rect = element.getBoundingClientRect();
+    setCursorPosition({
+      top: rect.top,
+      left: rect.right - 1, // Adjust for cursor width
+    });
+  };
+
+  console.log(
+    window.innerHeight,
+    window.innerWidth,
+    window.outerHeight,
+    window.outerWidth
+  );
 
   return (
     <div
@@ -102,7 +113,7 @@ const WordsComponent = forwardRef<HTMLDivElement>((_, ref) => {
       <div
         ref={containerRef}
         className={cn(
-          "overflow-hidden w-full h-fit flex flex-wrap",
+          "relative overflow-hidden w-full h-fit flex flex-wrap",
           !isActive && "filter blur-[3px] "
         )}
       >
@@ -116,6 +127,7 @@ const WordsComponent = forwardRef<HTMLDivElement>((_, ref) => {
             setCurrentActive={setCurrentActive}
           />
         ))}
+      <Cursor style={cursorPosition} isActive={isActive} />
       </div>
     </div>
   );

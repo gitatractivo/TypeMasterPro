@@ -34,6 +34,7 @@ interface WordContextType {
   registerOnTimerReset: (callback: () => void) => void;
   unregisterOnTimerReset: (callback: () => void) => void;
   handleAddingLine: (num: number) => void;
+  updateCursorPosition: (element: HTMLElement) => void;
 }
 
 const WordContext = createContext<WordContextType | undefined>(undefined);
@@ -53,6 +54,7 @@ export const WordProvider: React.FC<{
   const [timerResetListeners, setTimerResetListeners] = useState<
     (() => void)[]
   >([]);
+  const [cursorPosition, setCursorPosition] = useState({ top: 0, left: 0 });
 
   const registerOnTimerEnd = useCallback((callback: () => void) => {
     setTimerEndListeners((prev) => [...prev, callback]);
@@ -113,6 +115,14 @@ export const WordProvider: React.FC<{
 
   const metricsMemo = useMemo(() => metrics, [metrics]);
 
+  const updateCursorPosition = useCallback((element: HTMLElement) => {
+    const rect = element.getBoundingClientRect();
+    setCursorPosition({
+      top: rect.top,
+      left: rect.right - 1,
+    });
+  }, []);
+
   return (
     <WordContext.Provider
       value={{
@@ -132,6 +142,7 @@ export const WordProvider: React.FC<{
         handleAddingLine,
         metrics: metricsMemo,
         resetTimer,
+        updateCursorPosition,
       }}
     >
       {children}
