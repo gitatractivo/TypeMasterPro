@@ -87,12 +87,7 @@ const WordsComponent = forwardRef<HTMLDivElement>((_, ref) => {
     });
   };
 
-  console.log(
-    window.innerHeight,
-    window.innerWidth,
-    window.outerHeight,
-    window.outerWidth
-  );
+
 
   return (
     <div
