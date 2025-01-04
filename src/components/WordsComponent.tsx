@@ -79,13 +79,13 @@ const WordsComponent = forwardRef<HTMLDivElement>((_, ref) => {
     setVisible(0);
   };
 
-  const updateCursorPosition = (element: HTMLElement) => {
-    const rect = element.getBoundingClientRect();
-    setCursorPosition({
-      top: rect.top,
-      left: rect.right - 1, // Adjust for cursor width
-    });
-  };
+  // const updateCursorPosition = (element: HTMLElement) => {
+  //   const rect = element.getBoundingClientRect();
+  //   setCursorPosition({
+  //     top: rect.top,
+  //     left: rect.right - 1, // Adjust for cursor width
+  //   });
+  // };
 
 
 
