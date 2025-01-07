@@ -14,7 +14,6 @@ const CharWrapper = ({ char, isCurrent }: CharWrapperProps) => {
 
   useEffect(() => {
     if (isActive && isCurrent && charRef.current) {
-      
       updateCursorPosition(charRef.current);
     }
   }, [isActive, isCurrent]);
