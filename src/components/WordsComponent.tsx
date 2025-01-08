@@ -14,7 +14,7 @@ const WordsComponent = forwardRef<HTMLDivElement>((_, ref) => {
   const [currentActive, setCurrentActive] = useState<number>(0);
   const [visible, setVisible] = useState<number>(0);
   const [lineHeight, setLineHeight] = useState<number>(0);
-  const [cursorPosition, setCursorPosition] = useState({ top: 0, left: 0 });
+
   const {
     words,
     currentWordIndex,
@@ -33,7 +33,7 @@ const WordsComponent = forwardRef<HTMLDivElement>((_, ref) => {
     if (containerRef.current) {
       const container = containerRef.current;
       const lineHeight = parseInt(getComputedStyle(container).lineHeight);
-      console.log("Line Height: ", lineHeight);
+
       // container.style.height = `${(50 ) * 3}px`;
       container.style.height = "158px";
       setLineHeight(lineHeight);
@@ -43,9 +43,8 @@ const WordsComponent = forwardRef<HTMLDivElement>((_, ref) => {
   useLayoutEffect(() => {
     // if currentActive is == visible +2 then scroll to next line change visible to visible +1
     // if currentActive is == visible -1 then scroll to prev line change visible to visible -1
-    console.log("scroll reset called", currentActive, visible);
+
     if (currentActive === visible + 2) {
-      console.log("reset shift");
       handleAddingLine((currentWordIndex + 21) / (currentActive + 1) + 4);
       const vis = visible + 1;
       containerRef.current?.scrollBy(0, lineHeight + 2);
@@ -87,14 +86,12 @@ const WordsComponent = forwardRef<HTMLDivElement>((_, ref) => {
   //   });
   // };
 
-
-
   return (
     <div
       ref={ref}
       tabIndex={0}
       className={cn(
-        "focus:outline-none  focus:border-none relative overflow-hidden p-3 w-4/5 xl:min-w-[1020px]  2xl:max-w-[1536px] 2xl:min-w-[1280px] h-fit  mx-auto  maincontainer  gap-1 text-[2rem] font-robotoMono "
+        "focus:outline-none  focus:border-none relative overflow-hidden p-3 w-4/5 xl:min-w-[1020px]  2xl:max-w-[1536px] 2xl:min-w-[1280px] h-fit  mx-auto  mainContainer  gap-1 text-[2rem] font-robotoMono "
       )}
     >
       <div
@@ -108,10 +105,11 @@ const WordsComponent = forwardRef<HTMLDivElement>((_, ref) => {
       <div
         ref={containerRef}
         className={cn(
-          "relative overflow-hidden w-full h-fit flex flex-wrap",
+          "  overflow-hidden w-full h-fit flex flex-wrap",
           !isActive && "filter blur-[3px] "
         )}
       >
+        <Cursor isActive={isActive} />
         {words.map((w, ind) => (
           <WordWrapper
             key={w.id}
@@ -122,7 +120,6 @@ const WordsComponent = forwardRef<HTMLDivElement>((_, ref) => {
             setCurrentActive={setCurrentActive}
           />
         ))}
-      <Cursor style={cursorPosition} isActive={isActive} />
       </div>
     </div>
   );

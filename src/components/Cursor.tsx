@@ -1,16 +1,43 @@
 import { cn } from "@/lib/utils";
+import { useWordContext } from "./WordContext";
+import { useLayoutEffect, useRef } from "react";
 
 type CursorProps = {
-  style: React.CSSProperties;
   isActive: boolean;
 };
 
-const Cursor = ({ style, isActive }: CursorProps) => {
+const Cursor = ({ isActive }: CursorProps) => {
+  const { cursorPosition } = useWordContext();
+  const ref = useRef<HTMLDivElement>(null);
+
+  const style = {
+    top: cursorPosition.top,
+    left: cursorPosition.left,
+  };
+
+  useLayoutEffect(() => {
+    if (isActive) {
+      setTimeout(() => {
+        ref.current?.classList.add("cursor");
+     
+        
+      }, 500);
+    }
+
+    return () => {
+      if (ref.current) {
+        ref.current.classList.remove("cursor");
+      }
+    };
+  }, [cursorPosition, isActive]);
+
+  // TODO: separate out transition and cursorBlink animation
   return (
     <div
+      ref={ref}
       className={cn(
-        "fixed w-[2px] h-[32px] bg-[var(--cursor)] transition-all duration-100 cursor",
-        !isActive && "opacity-0"
+        "absolute w-[2px] h-[32px] bg-[var(--cursor)] transition-opacity duration-50",
+        !isActive ? "opacity-0" : ""
       )}
       style={style}
     />

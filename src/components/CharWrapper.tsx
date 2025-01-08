@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
 import { Char } from "@/types";
 import { useWordContext } from "./WordContext";
-import { useRef, useEffect } from "react";
+import { useRef, useLayoutEffect } from "react";
 
 type CharWrapperProps = {
   char: Char;
@@ -12,9 +12,25 @@ const CharWrapper = ({ char, isCurrent }: CharWrapperProps) => {
   const { isActive, updateCursorPosition } = useWordContext();
   const charRef = useRef<HTMLSpanElement>(null);
 
-  useEffect(() => {
+  //TODO: handle resizing of screen to adjust cursor position
+  useLayoutEffect(() => {
     if (isActive && isCurrent && charRef.current) {
-      updateCursorPosition(charRef.current);
+      const parentElement = document.querySelector(".mainContainer");
+
+      const parentRect = parentElement?.getBoundingClientRect();
+
+      const charRect = charRef.current.getBoundingClientRect();
+
+      const relativeTop =
+        charRect.top - parentRect!.top + parentElement!.scrollTop+2;
+
+      const relativeLeft =
+        charRect.right - parentRect!.left + parentElement!.scrollLeft;
+
+      updateCursorPosition({
+        top: relativeTop + "px",
+        left: relativeLeft + "px",
+      });
     }
   }, [isActive, isCurrent]);
 
