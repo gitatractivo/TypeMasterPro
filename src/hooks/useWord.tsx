@@ -30,12 +30,14 @@ const useWord = ({ handleWordTiming }: useWordProps) => {
       let extra = "";
       if (wordTyped?.length > word.length) {
         extra = wordTyped.slice(word.length);
-        const arr = [...words];
-        arr[currentWordIndex] = {
-          ...original,
-          extra,
-        };
-        setWords(arr);
+        setWords(prev=>{
+          const arr = [...prev];
+          arr[currentWordIndex] = {
+            ...original,
+            extra,
+          };
+          return arr
+        });
         return;
       }
       setWords((prevWords) => {
@@ -59,7 +61,6 @@ const useWord = ({ handleWordTiming }: useWordProps) => {
       console.log(error);
     }
   }, [wordTyped]);
-
 
   const updateChar = useCallback(
     (chars: Char[], index: number, isCorrect: boolean): Char[] => {
@@ -126,6 +127,7 @@ const useWord = ({ handleWordTiming }: useWordProps) => {
   const handleKeyPress = (key: string, code: string) => {
     if (code === "Space" || code === "Backspace" || /^[a-zA-Z]$/.test(key)) {
     }
+    
     if (code === "Space") {
       handleSpacePressed();
     } else if (code === "Backspace") {
@@ -143,35 +145,42 @@ const useWord = ({ handleWordTiming }: useWordProps) => {
 
   const handleSpacePressed = () => {
     if (!wordTyped) return;
-    const word = words[currentWordIndex].word;
-    const isCorrect = word === wordTyped;
-    const newWords = [...words];
-    newWords[currentWordIndex] = {
-      ...newWords[currentWordIndex],
-      isCorrect,
-      isGuessed: true,
-    };
-    if (currentWordIndex < newWords.length - 1 && !isCorrect) {
-      newWords[currentWordIndex + 1] = {
-        ...newWords[currentWordIndex + 1],
-        isPrevWrong: true,
-      };
-    }
-    setWords(newWords);
 
-    // Update correct and incorrect guesses
-    if (isCorrect) {
+    setWords((prevWords) => {
+      const word = prevWords[currentWordIndex].word;
+      const isCorrect = word === wordTyped;
+      const newWords = [...prevWords];
+
+      newWords[currentWordIndex] = {
+        ...newWords[currentWordIndex],
+        isCorrect,
+        isGuessed: true,
+      };
+
+      if (currentWordIndex < newWords.length - 1 && !isCorrect) {
+        newWords[currentWordIndex + 1] = {
+          ...newWords[currentWordIndex + 1],
+          isPrevWrong: true,
+        };
+      }
+
+      return newWords;
+    });
+
+    // Move these updates after setWords since they don't depend on previous state
+    if (wordTyped === words[currentWordIndex].word) {
       correctGuesses.current += 1;
-      handleWordTiming(newWords[currentWordIndex]);
+      handleWordTiming(words[currentWordIndex]);
     } else {
       incorrectGuesses.current += 1;
-      extraCharsCount.current += newWords[currentWordIndex].extra.length;
+      extraCharsCount.current += words[currentWordIndex].extra.length;
 
       // Calculate mismatched characters
+      const currentWord = words[currentWordIndex].word;
       const mismatchedChars = wordTyped
         .split("")
         .reduce((count, char, index) => {
-          return char !== word[index] ? count + 1 : count;
+          return char !== currentWord[index] ? count + 1 : count;
         }, 0);
       mismatchedCharsCount.current += mismatchedChars;
     }
@@ -184,10 +193,23 @@ const useWord = ({ handleWordTiming }: useWordProps) => {
   const handleBackSpacePressed = () => {
     if (!wordTyped) {
       if (currentWordIndex > 0 && words[currentWordIndex].isPrevWrong) {
-        const newWords = [...words];
-        const previousWord = newWords[currentWordIndex - 1];
+        setWords((prevWords) => {
+          const newWords = [...prevWords];
+          const previousWord = newWords[currentWordIndex - 1];
 
-        // Subtract extra characters and mismatched characters from the current word
+          newWords[currentWordIndex] = {
+            ...newWords[currentWordIndex],
+            isPrevWrong: false,
+          };
+          newWords[currentWordIndex - 1] = {
+            ...newWords[currentWordIndex - 1],
+            isGuessed: false,
+          };
+
+          return newWords;
+        });
+
+        const previousWord = words[currentWordIndex - 1];
         incorrectGuesses.current -= 1;
         extraCharsCount.current -= previousWord.extra.length;
 
@@ -196,21 +218,11 @@ const useWord = ({ handleWordTiming }: useWordProps) => {
         }, 0);
         mismatchedCharsCount.current -= mismatchedChars;
 
-        newWords[currentWordIndex] = {
-          ...newWords[currentWordIndex],
-          isPrevWrong: false,
-        };
-        newWords[currentWordIndex - 1] = {
-          ...newWords[currentWordIndex - 1],
-          isGuessed: false,
-        };
-        setWords(newWords);
-
         const word =
-          newWords[currentWordIndex - 1].chars
+          words[currentWordIndex - 1].chars
             .filter((c) => c.isGuessed)
             .map((c) => c.char)
-            .join("") + newWords[currentWordIndex - 1].extra;
+            .join("") + words[currentWordIndex - 1].extra;
 
         setCurrentWordIndex(currentWordIndex - 1);
         setWordTyped(word);
@@ -226,7 +238,6 @@ const useWord = ({ handleWordTiming }: useWordProps) => {
     setWords([]);
     const gernerated = generateWords(INITIAL_WORDS_NUMBER);
 
-
     setWords(gernerated);
     setCurrentWordIndex(0);
     setWordTyped("");
@@ -239,7 +250,7 @@ const useWord = ({ handleWordTiming }: useWordProps) => {
 
   const addWords = (num: number) => {
     const gernerated = generateWords(num);
-    setWords([...words, ...gernerated]);
+    setWords(words=>[...words, ...gernerated]);
   };
 
   const handleMetrics = () => {

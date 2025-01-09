@@ -121,7 +121,6 @@ export const WordProvider: React.FC<{
   const metricsMemo = useMemo(() => metrics, [metrics]);
 
   const updateCursorPosition = (position:Position) => {
-    console.log("Setting cursor position: ", position);
     setCursorPosition(position);
   };
 

@@ -43,7 +43,9 @@ const WordsComponent = forwardRef<HTMLDivElement>((_, ref) => {
   useLayoutEffect(() => {
     // if currentActive is == visible +2 then scroll to next line change visible to visible +1
     // if currentActive is == visible -1 then scroll to prev line change visible to visible -1
-
+    console.log("Current Active: ", currentActive);
+    console.log("Visible: ", visible);
+    console.log("Current Word Index: ", currentWordIndex);
     if (currentActive === visible + 2) {
       handleAddingLine((currentWordIndex + 21) / (currentActive + 1) + 4);
       const vis = visible + 1;
@@ -54,7 +56,7 @@ const WordsComponent = forwardRef<HTMLDivElement>((_, ref) => {
       containerRef.current?.scrollBy(0, -(lineHeight + 2));
       setVisible(vis);
     }
-  }, [currentActive]);
+  }, [currentActive,currentWordIndex]);
 
   useEffect(() => {
     registerOnTimerEnd(resetScroll);
@@ -78,13 +80,7 @@ const WordsComponent = forwardRef<HTMLDivElement>((_, ref) => {
     setVisible(0);
   };
 
-  // const updateCursorPosition = (element: HTMLElement) => {
-  //   const rect = element.getBoundingClientRect();
-  //   setCursorPosition({
-  //     top: rect.top,
-  //     left: rect.right - 1, // Adjust for cursor width
-  //   });
-  // };
+ console.log(words)
 
   return (
     <div

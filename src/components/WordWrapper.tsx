@@ -25,35 +25,34 @@ const WordWrapper = ({
   const wordRef = useRef<HTMLSpanElement>(null);
 
   useLayoutEffect(() => {
-    if (isActive && isCurrent && wordRef.current &&(charIndex === -1 || charIndex>=word.chars.length)) {
+    if (
+      isActive &&
+      isCurrent &&
+      wordRef.current &&
+      (charIndex === -1 || charIndex >= word.chars.length)
+    ) {
       const parentElement = document.querySelector(".mainContainer");
       const parentRect = parentElement?.getBoundingClientRect();
       const wordRect = wordRef.current.getBoundingClientRect();
       const relativeTop =
         wordRect.top - parentRect!.top + parentElement!.scrollTop + 4;
-      let relativeLeft =0
-      
-        
+      let relativeLeft = 0;
+
       if (charIndex === -1) {
         relativeLeft =
           wordRect.left - parentRect!.left + parentElement!.scrollLeft;
-          
-      }
-      else if(charIndex>=word.chars.length) {
+      } else if (charIndex >= word.chars.length) {
         relativeLeft =
           wordRect.right - parentRect!.left + parentElement!.scrollLeft;
-          
       }
-      
+
       updateCursorPosition({
         top: relativeTop + "px",
         left: relativeLeft + "px",
       });
-
-      
     }
 
-    if (wordRef.current) {
+    if (wordRef.current && isActive && isCurrent) {
       const wordElement = wordRef.current;
       const parentElement = wordElement.parentElement;
 
@@ -69,6 +68,7 @@ const WordWrapper = ({
         const lineNumber = Math.floor(relativeTop / lineHeight);
 
         if (lineNumber !== currentActive) {
+          console.log("Setting current active: ", lineNumber);
           setCurrentActive(lineNumber);
         }
       }
@@ -98,7 +98,6 @@ const WordWrapper = ({
           )}
         >
           {word.extra}
-          
         </span>
       )}
     </span>
