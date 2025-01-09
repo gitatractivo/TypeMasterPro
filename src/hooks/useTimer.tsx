@@ -22,16 +22,11 @@ export const useTimer = ({
     if (initialTime <= 0) {
       throw new Error("Initial time must be greater than zero");
     }
-    
-    
 
     setIsActive(true);
     setCountDown(initialTime * 1000);
 
-    
-
     intervalRef.current = setInterval(() => {
-      
       setCountDown((prevCount) => {
         if (prevCount <= 1000) {
           clearInterval(intervalRef.current!);
@@ -80,14 +75,12 @@ export const useTimer = ({
       const totalSeconds = Math.floor(ms / 1000);
       const minutes = Math.floor(totalSeconds / 60);
       const seconds = totalSeconds % 60;
-      if(totalSeconds>=60){
+      if (totalSeconds >= 60) {
         return `${minutes.toString().padStart(2, "0")}:${seconds
           .toString()
           .padStart(2, "0")}`;
       }
-      return `${seconds
-        .toString()
-        .padStart(2, "0")}`;
+      return `${seconds.toString().padStart(2, "0")}`;
     },
     [initialTime]
   );
@@ -104,6 +97,5 @@ export const useTimer = ({
     stopTimer,
     getElapsedTime,
     resetTimer,
-
   };
 };

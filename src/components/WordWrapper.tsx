@@ -25,55 +25,60 @@ const WordWrapper = ({
   const wordRef = useRef<HTMLSpanElement>(null);
 
   useLayoutEffect(() => {
-    if (
-      isActive &&
-      isCurrent &&
-      wordRef.current &&
-      (charIndex === -1 || charIndex >= word.chars.length)
-    ) {
+    if (!isActive || !isCurrent || !wordRef.current) return;
+
+    const updateCursor = () => {
       const parentElement = document.querySelector(".mainContainer");
-      const parentRect = parentElement?.getBoundingClientRect();
-      const wordRect = wordRef.current.getBoundingClientRect();
-      const relativeTop =
-        wordRect.top - parentRect!.top + parentElement!.scrollTop + 4;
-      let relativeLeft = 0;
+      if (!parentElement) return;
 
-      if (charIndex === -1) {
-        relativeLeft =
-          wordRect.left - parentRect!.left + parentElement!.scrollLeft;
-      } else if (charIndex >= word.chars.length) {
-        relativeLeft =
-          wordRect.right - parentRect!.left + parentElement!.scrollLeft;
-      }
+      const parentRect = parentElement.getBoundingClientRect();
+      const wordRect = wordRef.current!.getBoundingClientRect();
 
-      updateCursorPosition({
-        top: relativeTop + "px",
-        left: relativeLeft + "px",
-      });
-    }
-
-    if (wordRef.current && isActive && isCurrent) {
-      const wordElement = wordRef.current;
-      const parentElement = wordElement.parentElement;
-
-      if (parentElement) {
-        const parentRect = parentElement.getBoundingClientRect();
-        const wordRect = wordElement.getBoundingClientRect();
-
-        // Calculate the word's position relative to the parent's top, accounting for scroll
+      if (charIndex === -1 || charIndex >= word.chars.length) {
         const relativeTop =
-          wordRect.top - parentRect.top + parentElement.scrollTop;
+          wordRect.top - parentRect.top + parentElement.scrollTop + 4;
+        const relativeLeft =
+          charIndex === -1
+            ? wordRect.left - parentRect.left + parentElement.scrollLeft
+            : wordRect.right - parentRect.left + parentElement.scrollLeft;
 
-        const lineHeight = LINE_HEIGHT + 2 + 16; //border bottom and margin
-        const lineNumber = Math.floor(relativeTop / lineHeight);
-
-        if (lineNumber !== currentActive) {
-          console.log("Setting current active: ", lineNumber);
-          setCurrentActive(lineNumber);
-        }
+        updateCursorPosition({
+          top: relativeTop + "px",
+          left: relativeLeft + "px",
+        });
       }
-    }
+    };
+
+    // Debounce the cursor update
+    const timeoutId = setTimeout(updateCursor, 0);
+    return () => clearTimeout(timeoutId);
   }, [word, isActive, isCurrent, charIndex]);
+
+  // Separate effect for line tracking
+  useLayoutEffect(() => {
+    if (!wordRef.current || !isActive || !isCurrent) return;
+
+    const calculateLine = () => {
+      const wordElement = wordRef.current!;
+      const parentElement = wordElement.parentElement;
+      if (!parentElement) return;
+
+      const parentRect = parentElement.getBoundingClientRect();
+      const wordRect = wordElement.getBoundingClientRect();
+      const relativeTop =
+        wordRect.top - parentRect.top + parentElement.scrollTop;
+      const lineHeight = LINE_HEIGHT + 2 + 16;
+      const lineNumber = Math.floor(relativeTop / lineHeight);
+
+      if (lineNumber !== currentActive) {
+        setCurrentActive(lineNumber);
+      }
+    };
+
+    // Debounce the line calculation
+    const timeoutId = setTimeout(calculateLine, 0);
+    return () => clearTimeout(timeoutId);
+  }, [isActive, isCurrent, currentActive]);
 
   return (
     <span

@@ -43,9 +43,7 @@ const WordsComponent = forwardRef<HTMLDivElement>((_, ref) => {
   useLayoutEffect(() => {
     // if currentActive is == visible +2 then scroll to next line change visible to visible +1
     // if currentActive is == visible -1 then scroll to prev line change visible to visible -1
-    console.log("Current Active: ", currentActive);
-    console.log("Visible: ", visible);
-    console.log("Current Word Index: ", currentWordIndex);
+
     if (currentActive === visible + 2) {
       handleAddingLine((currentWordIndex + 21) / (currentActive + 1) + 4);
       const vis = visible + 1;
@@ -56,20 +54,23 @@ const WordsComponent = forwardRef<HTMLDivElement>((_, ref) => {
       containerRef.current?.scrollBy(0, -(lineHeight + 2));
       setVisible(vis);
     }
-  }, [currentActive,currentWordIndex]);
+  }, [currentActive, currentWordIndex]);
 
-  useEffect(() => {
-    registerOnTimerEnd(resetScroll);
-    registerOnTimerReset(resetScroll);
+  // useEffect(() => {
+  //   registerOnTimerEnd(resetScroll);
+  //   registerOnTimerReset(resetScroll);
 
-    return () => {
-      unregisterOnTimerEnd(resetScroll);
-      unregisterOnTimerReset(resetScroll);
-    };
-  }, [registerOnTimerEnd, unregisterOnTimerEnd]);
+  //   return () => {
+  //     unregisterOnTimerEnd(resetScroll);
+  //     unregisterOnTimerReset(resetScroll);
+  //   };
+  // }, [registerOnTimerEnd, unregisterOnTimerEnd]);
   useEffect(() => {
     if (isActive) {
       // focus on container with tabindex 0
+    }
+    else{
+      resetScroll()
     }
   }, [isActive]);
 
@@ -79,8 +80,6 @@ const WordsComponent = forwardRef<HTMLDivElement>((_, ref) => {
 
     setVisible(0);
   };
-
- console.log(words)
 
   return (
     <div
