@@ -249,8 +249,8 @@ const useWord = ({ handleWordTiming }: useWordProps) => {
   };
 
   const addWords = (num: number) => {
-    const gernerated = generateWords(num);
-    setWords(words=>[...words, ...gernerated]);
+    const generated = generateWords(num);
+    setWords(words=>[...words, ...generated]);
   };
 
   const handleMetrics = () => {

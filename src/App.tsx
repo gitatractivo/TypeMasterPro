@@ -7,7 +7,6 @@ function App() {
   const onTimerEnd = () => {
     console.log("Timer Ended");
   };
-
   return (
     <ErrorBoundary>
       <ThemeProvider>
