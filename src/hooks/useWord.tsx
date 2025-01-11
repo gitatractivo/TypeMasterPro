@@ -236,9 +236,9 @@ const useWord = ({ handleWordTiming }: useWordProps) => {
 
   const resetWords = () => {
     setWords([]);
-    const gernerated = generateWords(INITIAL_WORDS_NUMBER);
+    const generated = generateWords(INITIAL_WORDS_NUMBER);
 
-    setWords(gernerated);
+    setWords(generated);
     setCurrentWordIndex(0);
     setWordTyped("");
 
