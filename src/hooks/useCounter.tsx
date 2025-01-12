@@ -78,8 +78,7 @@ const useCounter = ({
         startTimer();
         return;
       }
-      if(isActive ){
-
+      if (isActive) {
         keystrokeCount.current += 1;
         handleKeyPress(key, code);
       }

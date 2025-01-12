@@ -195,7 +195,7 @@ const useWord = ({ handleWordTiming }: useWordProps) => {
       if (currentWordIndex > 0 && words[currentWordIndex].isPrevWrong) {
         setWords((prevWords) => {
           const newWords = [...prevWords];
-          const previousWord = newWords[currentWordIndex - 1];
+          
 
           newWords[currentWordIndex] = {
             ...newWords[currentWordIndex],
