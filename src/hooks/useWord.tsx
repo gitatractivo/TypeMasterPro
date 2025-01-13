@@ -13,7 +13,7 @@ const useWord = ({ handleWordTiming }: useWordProps) => {
   );
   const [currentWordIndex, setCurrentWordIndex] = useState<number>(0);
   const [wordTyped, setWordTyped] = useState<string>("");
-  const [keyState, setKeyState] = useState<"spac" | "inc" | "dec">("spac");
+  const [keyState, setKeyState] = useState<"space" | "inc" | "dec">("space");
   const correctGuesses = useRef<number>(0);
   const incorrectGuesses = useRef<number>(0);
   const extraCharsCount = useRef<number>(0);
@@ -30,13 +30,13 @@ const useWord = ({ handleWordTiming }: useWordProps) => {
       let extra = "";
       if (wordTyped?.length > word.length) {
         extra = wordTyped.slice(word.length);
-        setWords(prev=>{
+        setWords((prev) => {
           const arr = [...prev];
           arr[currentWordIndex] = {
             ...original,
             extra,
           };
-          return arr
+          return arr;
         });
         return;
       }
@@ -127,7 +127,7 @@ const useWord = ({ handleWordTiming }: useWordProps) => {
   const handleKeyPress = (key: string, code: string) => {
     if (code === "Space" || code === "Backspace" || /^[a-zA-Z]$/.test(key)) {
     }
-    
+
     if (code === "Space") {
       handleSpacePressed();
     } else if (code === "Backspace") {
@@ -186,7 +186,7 @@ const useWord = ({ handleWordTiming }: useWordProps) => {
     }
 
     setCurrentWordIndex(currentWordIndex + 1);
-    setKeyState("spac");
+    setKeyState("space");
     setWordTyped("");
   };
 
@@ -195,7 +195,6 @@ const useWord = ({ handleWordTiming }: useWordProps) => {
       if (currentWordIndex > 0 && words[currentWordIndex].isPrevWrong) {
         setWords((prevWords) => {
           const newWords = [...prevWords];
-          
 
           newWords[currentWordIndex] = {
             ...newWords[currentWordIndex],
@@ -250,7 +249,7 @@ const useWord = ({ handleWordTiming }: useWordProps) => {
 
   const addWords = (num: number) => {
     const generated = generateWords(num);
-    setWords(words=>[...words, ...generated]);
+    setWords((words) => [...words, ...generated]);
   };
 
   const handleMetrics = () => {
