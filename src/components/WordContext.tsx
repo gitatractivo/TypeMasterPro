@@ -67,7 +67,6 @@ export const WordProvider: React.FC<{
     setCursorPosition({ top: "12px", left: "12px" });
   }, []);
 
-
   const registerOnTimerEnd = useCallback((callback: () => void) => {
     setTimerEndListeners((prev) => [...prev, callback]);
   }, []);
