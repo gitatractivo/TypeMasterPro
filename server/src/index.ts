@@ -12,12 +12,11 @@ const roomManager = new RoomManager();
 
 const PORT = process.env.PORT || 8080;
 
-// Sample typing texts
+
 const texts = [
   "The quick brown fox jumps over the lazy dog.",
   "To be or not to be, that is the question.",
   "All that glitters is not gold.",
-  // Add more texts as needed
 ];
 
 app.get("/health", (req, res) => {
