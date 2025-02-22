@@ -1,0 +1,9 @@
+{
+  "name": "@workspace/prettier-config",
+  "version": "0.0.1",
+  "private": true,
+  "main": "index.js",
+  "dependencies": {
+    "prettier": "^3.0.3"
+  }
+}
