@@ -1,18 +1,25 @@
-"use client"
+"use client";
+import React from "react";
+import { ThemeProvider } from "@/components/ThemeContext";
+import { WordProvider } from "@/components/WordContext";
+import ErrorBoundary from "@/components/ErrorBoundary";
 
-import * as React from "react"
-import { ThemeProvider as NextThemesProvider } from "next-themes"
+type ProvidersProps = {
+  children: React.ReactNode;
+};
 
-export function Providers({ children }: { children: React.ReactNode }) {
+const Providers: React.FC<ProvidersProps> = ({ children }) => {
+  const handleTimerEnd = () => {
+    console.log("Timer ended");
+  };
+
   return (
-    <NextThemesProvider
-      attribute="class"
-      defaultTheme="system"
-      enableSystem
-      // disableTransitionOnChange
-      enableColorScheme
-    >
-      {children}
-    </NextThemesProvider>
-  )
-}
+    <ErrorBoundary>
+      <ThemeProvider>
+        <WordProvider onTimerEnd={handleTimerEnd}>{children}</WordProvider>
+      </ThemeProvider>
+    </ErrorBoundary>
+  );
+};
+
+export default Providers;

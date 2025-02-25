@@ -1,22 +1,37 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 240 10% 3.9%;
+    --background: #f0f0f0;
+    --text: #1a1a1a;
+    --primary: #2563eb;
+    --secondary: #475569;
+    --accent: #0ea5e9;
+    --error: #dc2626;
+    --correct: #16a34a;
+    --cursor: #000000;
+
+   
+
+    /* default tailwind variable */
+
+    /* --background: 0 0% 100%; */
+    /* --foreground: 240 10% 3.9%; */
     --card: 0 0% 100%;
     --card-foreground: 240 10% 3.9%;
     --popover: 0 0% 100%;
     --popover-foreground: 240 10% 3.9%;
-    --primary: 240 5.9% 10%;
+    /* --primary: 240 5.9% 10%; */
     --primary-foreground: 0 0% 98%;
-    --secondary: 240 4.8% 95.9%;
+    /* --secondary: 240 4.8% 95.9%; */
     --secondary-foreground: 240 5.9% 10%;
     --muted: 240 4.8% 95.9%;
     --muted-foreground: 240 3.8% 46.1%;
-    --accent: 240 4.8% 95.9%;
+    /* --accent: 240 4.8% 95.9%; */
     --accent-foreground: 240 5.9% 10%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
@@ -30,7 +45,7 @@
     --chart-5: 27 87% 67%;
     --radius: 0.5rem;
   }
-  .dark {
+  /* .dark {
     --background: 240 10% 3.9%;
     --foreground: 0 0% 98%;
     --card: 240 10% 3.9%;
@@ -55,15 +70,45 @@
     --chart-3: 30 80% 55%;
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
-  }
+  } */
 }
 
 @layer base {
   * {
     @apply border-border;
   }
-  body {
-    @apply bg-background text-foreground;
+   body {
+    @apply bg-background text-foreground font-robotoMono;
+    background-color: var(--background);
+    color: var(--text);
+  }
+}
+
+@layer base {
+ .cursor {
+    animation: cursorBlink 1s ease-in-out infinite;
+    animation-delay: 0.5s;
+    transition: transform 300ms ease-out 50ms;
+    opacity: 1;
+  }
+
+  .cursor-move {
+    animation: none;
+    opacity: 1;
+    animation: cursorBlink 1s ease-in-out infinite;
+    animation-delay: 0.5s;
+  }
+
+  @keyframes cursorBlink {
+    0%,
+    50%,100% {
+      opacity: 1;
+    }
+    51%,
+    99% {
+      opacity: 0;
+    }
+
   }
 }
 
