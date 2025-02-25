@@ -12,6 +12,8 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
+
+  // @ts-ignore
   const [currentTheme, setCurrentTheme] = useState<Theme>(() => {
     const savedTheme = localStorage.getItem(THEME_STORAGE_KEY);
     return savedTheme
