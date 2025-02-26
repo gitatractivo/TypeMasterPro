@@ -35,9 +35,7 @@ wss.on("connection", (ws: WebSocket) => {
           if (!user) {
             user = new User(data.payload.name, ws);
           }
-          const randomText = texts[Math.floor(Math.random() * texts.length)];
-          // @ts-ignore
-          const room = roomManager.createRoom(randomText);
+          const room = roomManager.createRoom(data.payload.numberOfWords || 50);
           roomManager.joinRoom(room.id, user);
           user.sendMessage("room_created", { roomId: room.id });
           break;
@@ -58,7 +56,7 @@ wss.on("connection", (ws: WebSocket) => {
           if (user?.roomId) {
             const room = roomManager.getRoom(user.roomId);
             if (room) {
-              room.startGame();
+              room.startGame(data.payload.duration);
             }
           }
           break;
@@ -70,6 +68,8 @@ wss.on("connection", (ws: WebSocket) => {
             if (room) {
               room.updateUserProgress(
                 user.id,
+                data.payload.currentWordId,
+                data.payload.currentCharIndex,
                 data.payload.progress,
                 data.payload.wpm
               );

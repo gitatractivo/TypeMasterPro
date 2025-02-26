@@ -24,6 +24,7 @@
     "@types/ws": "^8.5.14",
     "@workspace/eslint-config": "workspace:*",
     "@workspace/prettier-config": "workspace:*",
+    "@workspace/shared": "workspace:*",
     "@workspace/typescript-config": "workspace:*"
   }
 }
