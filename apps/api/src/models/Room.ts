@@ -1,4 +1,4 @@
-import { Room as RoomType, RoomStatus, User } from '../types';
+import { Room as RoomType, RoomStatus, User } from '@/types';
 import { v4 as uuidv4 } from 'uuid';
 import { Word, GameProgress } from '@workspace/shared/types';
 import { generateWords, calculateLeaderProgress } from '@workspace/shared/utils';
@@ -95,13 +95,16 @@ export class Room implements RoomType {
         ),
       );
 
-      this.broadcastMessage('progress_update', {
-        ...leaderProgress,
-        // @ts-ignore
-        currentWordId: this.userProgresses[leaderProgress.userId].currentWordId,
-        // @ts-ignore
-        currentCharIndex: this.userProgresses[leaderProgress.userId].currentCharIndex,
-      });
+      const leaderData = leaderProgress.userId ? this.userProgresses[leaderProgress.userId] : null;
+      if (leaderData) {
+        this.broadcastMessage('progress_update', {
+          ...leaderProgress,
+          currentWordId: leaderData.currentWordId,
+          currentCharIndex: leaderData.currentCharIndex,
+        });
+      }
+
+      //TODO: else throw error
 
       if (totalProgress === 100) {
         this.checkGameEnd();
@@ -134,8 +137,6 @@ export class Room implements RoomType {
 
   private broadcastMessage(type: string, payload: any): void {
     this.users.forEach((user) => {
-      // @ts-ignore
-
       user.sendMessage(type, payload);
     });
   }
@@ -144,8 +145,15 @@ export class Room implements RoomType {
     this.status = RoomStatus.WAITING;
     this.startTime = null;
     this.endTime = null;
-    // @ts-ignore
 
     this.users.forEach((user) => user.reset());
+  }
+
+  public isNameAvailable(name: string): boolean {
+    return !Array.from(this.users.values()).some((user) => user.name === name);
+  }
+
+  public getExistingNames(): string[] {
+    return Array.from(this.users.values()).map((user) => user.name);
   }
 }

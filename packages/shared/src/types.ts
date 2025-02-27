@@ -26,3 +26,10 @@ export type GameConfig = {
   duration: number; // in seconds
   numberOfWords: number;
 };
+
+export enum MessageType {
+  CREATE_ROOM = 'create_room',
+  JOIN_ROOM = 'join_room',
+  START_GAME = 'start_game',
+  UPDATE_PROGRESS = 'update_progress',
+}

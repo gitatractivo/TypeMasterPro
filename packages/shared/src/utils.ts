@@ -1,3 +1,4 @@
+//@ts-ignore
 import { generate } from 'random-words';
 import { Word } from './types';
 
@@ -48,4 +49,84 @@ export const calculateLeaderProgress = (progresses: {
     progress: maxProgress,
     wpm: leaderWpm,
   };
+};
+
+const adjectives = [
+  'Swift',
+  'Rapid',
+  'Nimble',
+  'Quick',
+  'Fast',
+  'Speedy',
+  'Agile',
+  'Deft',
+  'Elite',
+  'Prime',
+  'Master',
+  'Expert',
+  'Pro',
+  'Ace',
+  'Champion',
+  'Star',
+  'Royal',
+  'Epic',
+  'Legendary',
+  'Mystic',
+  'Cosmic',
+  'Divine',
+  'Supreme',
+  'Ultra',
+  'Cyber',
+  'Tech',
+  'Digital',
+  'Quantum',
+  'Neon',
+  'Pixel',
+  'Binary',
+  'Code',
+];
+
+const nouns = [
+  'Typer',
+  'Typist',
+  'Writer',
+  'Scribe',
+  'Wizard',
+  'Master',
+  'Phoenix',
+  'Dragon',
+  'Eagle',
+  'Falcon',
+  'Tiger',
+  'Lion',
+  'Panther',
+  'Wolf',
+  'Ninja',
+  'Samurai',
+  'Knight',
+  'Warrior',
+  'Legend',
+  'Hero',
+  'Champion',
+  'Prodigy',
+  'Sage',
+  'Maven',
+  'Coder',
+  'Hacker',
+  'Programmer',
+  'Developer',
+  'Engineer',
+  'Builder',
+  'Creator',
+  'Smith',
+];
+
+export const generateCoolName = (): string => {
+  const adjective = adjectives[Math.floor(Math.random() * adjectives.length)];
+  const noun = nouns[Math.floor(Math.random() * nouns.length)];
+  return `${adjective}${noun}`;
+};
+
+export const isNameTaken = (name: string, existingNames: string[]): boolean => {
+  return existingNames.some((existingName) => existingName === name);
 };

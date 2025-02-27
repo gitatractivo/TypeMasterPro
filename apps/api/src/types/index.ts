@@ -1,3 +1,4 @@
+
 import { Word } from '@workspace/shared/types';
 
 export interface User {
@@ -6,6 +7,8 @@ export interface User {
   roomId: string | null;
   progress: number;
   wpm: number;
+  sendMessage(type: string, payload: any): void;
+  reset(): void;
 }
 
 export interface Room {
@@ -24,14 +27,7 @@ export enum RoomStatus {
   FINISHED = 'finished',
 }
 
-export enum MessageType {
-  CREATE_ROOM = 'create_room',
-  JOIN_ROOM = 'join_room',
-  START_GAME = 'start_game',
-  UPDATE_PROGRESS = 'update_progress',
-}
-
 export interface ServerMessage {
-  type: MessageType;
+  type: string;
   payload: any;
 }

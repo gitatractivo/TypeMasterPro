@@ -7,13 +7,6 @@
       "@workspace/ui/*": ["./src/*"]
     }
   },
-  "include": [
-    ".",
-    "../../apps/web/hooks/useCounter.tsx",
-    "../../apps/web/hooks/useHotKeyPress.tsx",
-    "../../apps/web/hooks/useKeyDown.tsx",
-    "../../apps/web/hooks/useTimer.tsx",
-    "../../apps/web/hooks/useWord.tsx"
-  ],
+  "include": ["."],
   "exclude": ["node_modules", "dist"]
 }
