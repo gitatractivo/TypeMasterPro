@@ -105,7 +105,6 @@ export class Room implements RoomType {
       }
 
       //TODO: else throw error
-
       if (totalProgress === 100) {
         this.checkGameEnd();
       }
