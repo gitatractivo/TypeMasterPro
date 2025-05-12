@@ -2,6 +2,15 @@ import { Room } from '@/models/Room';
 import { User } from '@/models/User';
 import { logger, devLogger } from '@/utils/logger';
 
+// TODO: Add a room manager that can be used to create, join, and leave rooms
+// the job of room manager is to manage the rooms and the users in the rooms
+// it should be responsible for adding and removing users from rooms
+// it should also be responsible for broadcasting messages to all users in a room
+// it should also be responsible for cleaning up users when they leave a room
+// it should also be responsible for deleting rooms when there are no users in them
+// it should also be responsible for creating rooms when a user joins a room
+
+
 export class RoomManager {
   private rooms: Map<string, Room>;
 
