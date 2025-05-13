@@ -17,9 +17,16 @@ export const NameInput = ({ onNameSubmit, isLoading = false }: NameInputProps) =
     setName(generateCoolName());
   }, []);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (name.trim()) {
+      //TODO: name check should be done after room assigned 
+      //check if the name is taken
+      // const isNameTaken = await checkNameTaken(name.trim());
+      // if (isNameTaken) {
+      //   // toast.error('Name is already taken');
+      //   return;
+      // }
       onNameSubmit(name.trim());
     }
   };
