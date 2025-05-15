@@ -2,8 +2,8 @@
   "name": "@workspace/shared",
   "version": "1.0.0",
   "private": true,
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "scripts": {
     "build": "tsc",
     "clean": "rm -rf dist",
@@ -20,7 +20,8 @@
   },
   "devDependencies": {
     "typescript": "^5.0.0",
-    "@workspace/typescript-config": "workspace:*"
+    "@workspace/typescript-config": "workspace:*",
+    "@types/node": "^22.13.5"
   },
   "exports": {
     "./*": {
