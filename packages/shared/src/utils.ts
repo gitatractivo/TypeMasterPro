@@ -124,7 +124,9 @@ const nouns = [
 export const generateCoolName = (): string => {
   const adjective = adjectives[Math.floor(Math.random() * adjectives.length)];
   const noun = nouns[Math.floor(Math.random() * nouns.length)];
-  return `${adjective}${noun}`;
+  //add a random number between 1 and 1000
+  const randomNumber = Math.floor(Math.random() * 1000);
+  return `${adjective}${noun}${randomNumber}`;
 };
 
 export const isNameTaken = (name: string, existingNames: string[]): boolean => {
