@@ -1,11 +1,11 @@
 import WebSocket from "ws";
-import { User as UserType } from "../types";
+import { User as UserType } from "@/types";
 import { v4 as uuidv4 } from "uuid";
 
 export class User implements UserType {
   public id: string;
   public name: string;
-  // @ts-ignore
+
 
   public socket: WebSocket;
   public roomId: string | null;

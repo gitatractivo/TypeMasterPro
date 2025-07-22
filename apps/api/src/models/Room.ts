@@ -1,27 +1,33 @@
-import { Room as RoomType, RoomStatus, User } from "../types";
-import { v4 as uuidv4 } from "uuid";
+import { Room as RoomType, RoomStatus, User } from '@/types';
+import { v4 as uuidv4 } from 'uuid';
+import { Word, GameProgress } from '@workspace/shared/types';
+import { generateWords, calculateLeaderProgress } from '@workspace/shared/utils';
 
 export class Room implements RoomType {
   public id: string;
   public users: Map<string, User>;
   public status: RoomStatus;
-  public text: string;
+  public words: Word[];
   public startTime: number | null;
   public endTime: number | null;
+  public duration: number;
+  private userProgresses: { [userId: string]: GameProgress };
 
-  constructor(text: string) {
+  constructor(numberOfWords: number = 50) {
     this.id = uuidv4();
     this.users = new Map();
     this.status = RoomStatus.WAITING;
-    this.text = text;
+    this.words = generateWords(numberOfWords);
     this.startTime = null;
     this.endTime = null;
+    this.duration = 60; // default duration in seconds
+    this.userProgresses = {};
   }
 
   public addUser(user: User): void {
     this.users.set(user.id, user);
     user.roomId = this.id;
-    this.broadcastMessage("user_joined", {
+    this.broadcastMessage('user_joined', {
       userId: user.id,
       userName: user.name,
       users: Array.from(this.users.values()).map((u) => ({
@@ -38,46 +44,75 @@ export class Room implements RoomType {
     if (user) {
       user.roomId = null;
       this.users.delete(userId);
-      this.broadcastMessage("user_left", { userId });
+      this.broadcastMessage('user_left', { userId });
     }
   }
 
-  public startGame(): void {
+  public startGame(duration?: number): void {
     this.status = RoomStatus.IN_PROGRESS;
     this.startTime = Date.now();
     this.endTime = null;
-    this.broadcastMessage("game_started", {
+    if (duration) {
+      this.duration = duration;
+    }
+    this.broadcastMessage('game_started', {
       startTime: this.startTime,
-      text: this.text,
+      duration: this.duration,
+      words: this.words,
     });
+
+    // Set timer to end game
+    setTimeout(() => {
+      if (this.status === RoomStatus.IN_PROGRESS) {
+        this.endGame();
+      }
+    }, this.duration * 1000);
   }
 
   public updateUserProgress(
     userId: string,
-    progress: number,
-    wpm: number
+    currentWordId: string,
+    currentCharIndex: number,
+    totalProgress: number,
+    wpm: number,
   ): void {
     const user = this.users.get(userId);
     if (user) {
-      // @ts-ignore
-
-      user.updateProgress(progress, wpm);
-      this.broadcastMessage('progress_update', {
+      this.userProgresses[userId] = {
         userId,
-        progress,
+        currentWordId,
+        currentCharIndex,
+        totalProgress,
         wpm,
-      });
+      };
 
-      if (progress === 100) {
+      const leaderProgress = calculateLeaderProgress(
+        Object.fromEntries(
+          Object.entries(this.userProgresses).map(([id, progress]) => [
+            id,
+            { progress: progress.totalProgress, wpm: progress.wpm },
+          ]),
+        ),
+      );
+
+      const leaderData = leaderProgress.userId ? this.userProgresses[leaderProgress.userId] : null;
+      if (leaderData) {
+        this.broadcastMessage('progress_update', {
+          ...leaderProgress,
+          currentWordId: leaderData.currentWordId,
+          currentCharIndex: leaderData.currentCharIndex,
+        });
+      }
+
+      //TODO: else throw error
+      if (totalProgress === 100) {
         this.checkGameEnd();
       }
     }
   }
 
   private checkGameEnd(): void {
-    const allFinished = Array.from(this.users.values()).every(
-      (user) => user.progress === 100
-    );
+    const allFinished = Array.from(this.users.values()).every((user) => user.progress === 100);
     if (allFinished) {
       this.endGame();
     }
@@ -93,7 +128,7 @@ export class Room implements RoomType {
       progress: user.progress,
     }));
 
-    this.broadcastMessage("game_finished", {
+    this.broadcastMessage('game_finished', {
       results,
       duration: this.endTime - (this.startTime || 0),
     });
@@ -101,8 +136,6 @@ export class Room implements RoomType {
 
   private broadcastMessage(type: string, payload: any): void {
     this.users.forEach((user) => {
-      // @ts-ignore
-
       user.sendMessage(type, payload);
     });
   }
@@ -111,8 +144,15 @@ export class Room implements RoomType {
     this.status = RoomStatus.WAITING;
     this.startTime = null;
     this.endTime = null;
-    // @ts-ignore
 
     this.users.forEach((user) => user.reset());
+  }
+
+  public isNameAvailable(name: string): boolean {
+    return !Array.from(this.users.values()).some((user) => user.name === name);
+  }
+
+  public getExistingNames(): string[] {
+    return Array.from(this.users.values()).map((user) => user.name);
   }
 }

@@ -1,0 +1,32 @@
+{
+  "name": "@workspace/shared",
+  "version": "1.0.0",
+  "private": true,
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "clean": "rm -rf dist",
+    "dev": "tsc -w",
+    "lint": "eslint src/",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "random-words": "^2.0.1"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0",
+    "@workspace/typescript-config": "workspace:*",
+    "@types/node": "^22.13.5"
+  },
+  "exports": {
+    "./*": {
+      "types": "./src/*.ts",
+      "default": "./dist/*.js"
+    }
+  }
+}

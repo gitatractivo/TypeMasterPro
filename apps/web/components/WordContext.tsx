@@ -1,5 +1,5 @@
 'use client';
-import { Word } from '@/types';
+import { Word } from '@workspace/shared/types';
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import useCounter, { WordTiming } from '@/hooks/useCounter';
 // import { DEFAULT_TIMER, TIMER_KEY } from "@/lib/constants";

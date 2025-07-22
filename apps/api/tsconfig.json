@@ -1,12 +1,15 @@
 {
-  "extends":"@workspace/typescript-config/base.json",
-  "compilerOptions":{
-    "rootDir":"./src",
-    // "paths":{
-    //   "@workspace/api/*":["./src/*"]
-    // }
-    "outDir": "./dist"
+  "extends": "@workspace/typescript-config/base.json",
+  "compilerOptions": {
+    "rootDir": "./src",
+    "outDir": "./dist",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"],
+      // "@workspace/shared/*": ["../../packages/shared/src/*"]
+    }
   },
-  "include":["."],
-  "exclude":["node_modules","dist"]
+ 
+  "include": ["."],
+  "exclude": ["node_modules", "dist"]
 }

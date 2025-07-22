@@ -1,5 +1,5 @@
 import { cn } from '@workspace/ui/lib/utils';
-import { Word } from '@/types';
+import { Word } from '@workspace/shared/types';
 import CharWrapper from './CharWrapper';
 import { useWordContext } from './WordContext';
 import { useLayoutEffect, useRef } from 'react';

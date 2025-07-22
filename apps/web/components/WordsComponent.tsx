@@ -45,7 +45,8 @@ const WordsComponent = forwardRef<HTMLDivElement>((_, ref) => {
         top: lineHeight + 2,
         behavior: 'instant',
       });
-      //@ts-ignore
+
+      // @ts-ignore
       const pos = parseInt(cursorPosition.top.split(-2));
       console.log('pos', pos, lineHeight);
       updateCursorPosition({
