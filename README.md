@@ -1,5 +1,5 @@
 # TypeMasterPro
-[![Ask DeepWiki](https://devin.ai/assets/askdeepwiki.png)](https://deepwiki.com/gitatractivo/TypeMasterPro)
+
 
 TypeMasterPro is a real-time, multiplayer typing game designed for competitive practice. Create or join rooms, challenge friends, and see your typing speed improve with detailed post-race analytics.
 
